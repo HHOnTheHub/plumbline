@@ -1,0 +1,11 @@
+{
+  "name": "plumbline",
+  "owner": { "name": "Hannes Heyns" },
+  "plugins": [
+    {
+      "name": "plumbline",
+      "source": "./plugins/plumbline",
+      "description": "Skills that keep an app conformant with the Plumbline engineering and tech-governance standard."
+    }
+  ]
+}

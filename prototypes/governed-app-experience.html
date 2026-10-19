@@ -1,0 +1,560 @@
+<title>Governed App Experience</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a CRUD admin app. Fixed top bar, left sidebar in three bands (Governance · The machine · Across the machine), scrolling main area, record drawer on the right. */
+:root{
+  --bg:#F4F5F8; --surface:#FFFFFF; --sunk:#ECEEF3; --side:#EEF0F4; --ink:#141D28; --muted:#566273; --line:#D9DEE6;
+  --accent:#2B47A3; --accent-soft:#E5EAF8; --accent-ink:#FFFFFF;
+  --ok:#1D7449; --ok-soft:#E1F2E8; --warn:#9A6200; --warn-soft:#FAEFD9; --bad:#AE2F2B; --bad-soft:#FAE4E2;
+  --mature:#6A3C9E; --mature-soft:#EFE7F8; --shade:rgba(20,29,40,.35);
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-label:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:8px; --sidew:252px; --toph:52px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151D; --surface:#161E29; --sunk:#1C2633; --side:#121922; --ink:#E6EBF2; --muted:#9AA7B8; --line:#2A3646;
+  --accent:#8EA6F2; --accent-soft:#1F2B4A; --accent-ink:#0F151D;
+  --ok:#5CC48C; --ok-soft:#16301F; --warn:#E3AE4F; --warn-soft:#33270F; --bad:#F07C76; --bad-soft:#3A1A19;
+  --mature:#C4A3EE; --mature-soft:#2A1F3B; --shade:rgba(0,0,0,.55); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151D; --surface:#161E29; --sunk:#1C2633; --side:#121922; --ink:#E6EBF2; --muted:#9AA7B8; --line:#2A3646;
+  --accent:#8EA6F2; --accent-soft:#1F2B4A; --accent-ink:#0F151D;
+  --ok:#5CC48C; --ok-soft:#16301F; --warn:#E3AE4F; --warn-soft:#33270F; --bad:#F07C76; --bad-soft:#3A1A19;
+  --mature:#C4A3EE; --mature-soft:#2A1F3B; --shade:rgba(0,0,0,.55); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:14.5px/1.55 var(--f-body);margin:0;overflow:hidden}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.4rem;font-weight:600}
+h2{font-size:1.1rem;font-weight:600}
+h3{font-size:.98rem;font-weight:600}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.label{font:600 .7rem/1.2 var(--f-label);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono);font-size:.82em}
+.tnum{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.note{color:var(--muted);font-size:.84rem}
+
+/* frame */
+.app{display:grid;grid-template-rows:var(--toph) minmax(0,1fr);height:100%}
+.top{display:flex;align-items:center;gap:10px;background:var(--surface);border-bottom:1px solid var(--line);
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));min-width:0}
+.burger{display:none;border:1px solid var(--line);background:var(--surface);border-radius:6px;width:34px;height:32px}
+.ent{display:flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap}
+.logo{width:24px;height:24px;border-radius:5px;background:var(--ink);color:var(--surface);display:grid;place-items:center;font:600 11px var(--f-mono)}
+.env{font:600 .66rem var(--f-label);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;background:var(--bad-soft);color:var(--bad)}
+.search{flex:1 1 120px;min-width:0;max-width:420px;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 10px}
+.spacer{flex:1}
+.sample{font:500 .7rem var(--f-label);letter-spacing:.05em;text-transform:uppercase;border:1px dashed var(--line);color:var(--muted);padding:3px 7px;border-radius:4px;white-space:nowrap}
+.role{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 8px}
+.body{display:grid;grid-template-columns:var(--sidew) minmax(0,1fr);min-height:0}
+@media (max-width:980px){.sample{display:none}}
+@media (max-width:860px){
+  .body{grid-template-columns:minmax(0,1fr)}
+  .burger{display:inline-grid;place-items:center}
+  .side{position:fixed;z-index:30;top:var(--toph);bottom:0;left:0;width:min(86vw,var(--sidew));transform:translateX(-102%);transition:transform .18s ease;box-shadow:0 0 0 1px var(--line)}
+  .side.open{transform:none}
+  .search,.ent .nm{display:none}
+}
+@media (prefers-reduced-motion:reduce){.side{transition:none}}
+
+/* sidebar */
+.side{background:var(--side);border-right:1px solid var(--line);overflow-y:auto;padding:12px 10px 24px;padding-left:max(10px,env(safe-area-inset-left,0px))}
+.band{margin-top:14px}
+.band:first-child{margin-top:0}
+.band-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 8px 6px}
+.band-h .label{color:var(--ink)}
+.band-h .hint{font:500 .66rem var(--f-label);color:var(--muted);letter-spacing:.04em}
+.nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;border-radius:6px;color:var(--ink);text-decoration:none;font-size:.88rem}
+.nav a:hover{background:var(--sunk)}
+.nav a.on{background:var(--surface);box-shadow:0 0 0 1px var(--line);font-weight:500}
+.nav a .c{font:500 .68rem var(--f-mono);color:var(--muted)}
+.nav a .c.hot{color:var(--accent)}
+.nav .parent .car{display:inline-block;width:10px;color:var(--muted);transition:transform .15s}
+.nav .parent[aria-expanded="true"] .car{transform:rotate(90deg)}
+.nav .kids{display:grid;margin:2px 0 4px 14px;padding-left:8px;border-left:1px solid var(--line)}
+.nav .kids[hidden]{display:none}
+.phase-n{font:600 .66rem var(--f-mono);color:var(--muted);margin-right:6px}
+.shade{position:fixed;inset:var(--toph) 0 0 0;background:var(--shade);z-index:20}
+
+/* main */
+main{overflow-y:auto;min-width:0}
+.page{max-width:1160px;margin:0 auto;display:grid;gap:18px;padding-block:20px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.crumb{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.crumb span+span::before{content:"/";margin-right:6px;color:var(--line)}
+.ph{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.ph .t{display:grid;gap:4px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.tile{display:grid;gap:3px}
+.tile .num{font-size:1.7rem;font-weight:600;line-height:1.1}
+.tile .sub{color:var(--muted);font-size:.82rem}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font:500 .72rem/1 var(--f-label);letter-spacing:.03em;padding:4px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)} .chip.acc{background:var(--accent-soft);color:var(--accent)}
+.chip.mat{background:var(--mature-soft);color:var(--mature)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 12px;font-weight:500;font-size:.86rem;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.55;cursor:default}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.done-note{color:var(--ok);font-size:.84rem;font-weight:500}
+
+/* governance strip */
+.gstrip{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-size:.82rem}
+.gstrip .sep{color:var(--line)}
+
+/* lists */
+.list{display:grid}
+.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:11px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0;padding-top:0}
+@media (max-width:560px){.item{grid-template-columns:auto minmax(0,1fr)}.item > .btns,.item > .chip{grid-column:2}}
+.item .what{font-weight:500}
+.item .meta{color:var(--muted);font-size:.84rem}
+.stripe{width:4px;align-self:stretch;border-radius:2px;background:var(--line)}
+.stripe.ok{background:var(--ok)} .stripe.warn{background:var(--warn)} .stripe.bad{background:var(--bad)} .stripe.mat{background:var(--mature)} .stripe.acc{background:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.flash{animation:fl .9s ease-out}@keyframes fl{from{background:var(--accent-soft)}to{background:transparent}}}
+
+/* table (CRUD list) */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.toolbar input{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 10px;min-width:0;flex:1 1 180px;max-width:300px}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .7rem var(--f-label);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+td.r,th.r{text-align:right}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--bg)}
+.pager{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+/* drawer */
+.drawer{position:fixed;z-index:40;top:0;right:0;bottom:0;width:min(460px,100vw);background:var(--surface);border-left:1px solid var(--line);
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;box-shadow:-12px 0 32px rgba(0,0,0,.12)}
+.drawer[hidden]{display:none}
+.dr-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:16px 18px;padding-top:calc(16px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--line)}
+.dr-b{overflow-y:auto;padding:16px 18px;display:grid;gap:14px;align-content:start}
+.dr-f{padding:12px 18px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-right:max(18px,env(safe-area-inset-right,0px));border-top:1px solid var(--line)}
+.fields{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;font-size:.88rem}
+.fields dt{color:var(--muted)} .fields dd{margin:0}
+.form{display:grid;gap:10px}
+.form label{display:grid;gap:4px;font-size:.84rem;color:var(--muted)}
+.form input,.form select,textarea{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 10px;color:var(--ink);width:100%}
+textarea{min-height:84px;resize:vertical}
+.hist{display:grid;gap:8px;font-size:.82rem}
+.hist div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}
+.hist .when{font-family:var(--f-mono);color:var(--muted);font-size:.76rem}
+.x{border:1px solid var(--line);background:var(--surface);border-radius:6px;width:30px;height:30px;flex:none}
+
+/* fab + toast */
+.fab{position:fixed;z-index:15;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));display:inline-flex;gap:6px;align-items:center;border-radius:999px;padding:9px 15px;background:var(--ink);color:var(--surface);border:0;font-weight:500;font-size:.86rem;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.toast{position:fixed;z-index:50;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:9px 14px;border-radius:8px;font-size:.86rem;max-width:calc(100vw - 32px)}
+
+/* footer */
+.vfoot{color:var(--muted);font:400 .74rem var(--f-mono);display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
+
+/* diagrams and charts */
+.diagram{overflow-x:auto}
+.diagram svg{display:block;min-width:820px;width:100%;height:auto}
+.n-box{fill:var(--surface);stroke:var(--line)} .n-box.acc{fill:var(--accent-soft);stroke:var(--accent)} .n-box.mat{fill:var(--mature-soft);stroke:var(--mature)}
+.n-t{fill:var(--ink);font:600 13px var(--f-body)} .n-s{fill:var(--muted);font:400 11px var(--f-body)} .n-k{fill:var(--muted);font:600 10px var(--f-label);letter-spacing:.08em}
+.arrow{stroke:var(--muted);stroke-width:1.5;fill:none} .arrow.mat{stroke:var(--mature);stroke-dasharray:5 4}
+.ah{fill:var(--muted)} .ah.mat{fill:var(--mature)} .m-t{fill:var(--mature);font:600 12px var(--f-body)}
+.bands{display:grid;gap:12px;grid-template-columns:1fr 2fr 2fr}
+@media (max-width:900px){.bands{grid-template-columns:minmax(0,1fr)}}
+.band-card{border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:8px;align-content:start;background:var(--surface)}
+.band-card ul{margin:0;padding-left:18px;font-size:.88rem}
+.machine{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.machine div{background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:8px;font-weight:500;font-size:.84rem;text-align:center}
+.across{display:grid;gap:4px}
+.across div{background:var(--sunk);border-radius:4px;padding:5px 8px;font-size:.84rem}
+.app-row{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) auto;gap:12px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:.86rem}
+.app-row:first-of-type{border-top:0}
+.scale{position:relative;height:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.scale span{background:var(--sunk);border-radius:2px} .scale span.in{background:var(--ok-soft)}
+.scale .res{position:absolute;top:2px;width:14px;height:14px;border-radius:50%;border:2px solid var(--surface);transform:translateX(-50%)}
+.scale-axis{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) auto;gap:12px;font:500 .66rem var(--f-label);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.scale-axis .ticks{display:grid;grid-template-columns:repeat(4,1fr);text-align:center}
+@media (max-width:520px){.app-row,.scale-axis{grid-template-columns:minmax(0,1fr) auto}.app-row .scale,.scale-axis .ticks{grid-column:1 / -1;grid-row:2}}
+.route{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:6px}
+.route.on{border-color:var(--accent);background:var(--accent-soft)}
+.fb-types{display:flex;flex-wrap:wrap;gap:6px;border:0;padding:0;margin:0}
+.fb-types label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:.84rem;cursor:pointer;background:var(--surface);color:var(--ink)}
+.fb-types input{accent-color:var(--accent);margin:0;width:auto}
+.ctx{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:.8rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.ctx dt{color:var(--muted)} .ctx dd{margin:0;font-family:var(--f-mono);font-size:.76rem;overflow-wrap:anywhere}
+</style>
+
+<div class="app">
+  <header class="top">
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
+    <span class="ent"><span class="logo">HA</span><span class="nm">Harbour Advisory Ltd ▾</span></span>
+    <span class="env">Production</span>
+    <input class="search" id="q" placeholder="Search records, jobs, clauses…" aria-label="Search">
+    <span class="spacer"></span>
+    <span class="sample">Sample data</span>
+    <button class="chip acc" id="actionsChip" style="border:0"><span class="dot"></span><span id="actionsN">4</span> actions</button>
+    <label class="label" for="role" style="display:none">Role</label>
+    <select class="role" id="role" aria-label="Viewing as">
+      <option value="operator">Operator</option>
+      <option value="director">Director</option>
+      <option value="crco">CRCO</option>
+    </select>
+  </header>
+  <div class="body">
+    <aside class="side" id="side" aria-label="Main menu"></aside>
+    <main id="main"></main>
+  </div>
+</div>
+<div class="shade" id="shade" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Record"></aside>
+<button class="fab" id="fab" type="button">Improve this</button>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function(){
+var $=function(s,el){return (el||document).querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ---------- menu: the Plumbline standard structure ---------- */
+var NAV=[
+  {band:'', items:[{id:'home',label:'Home'}]},
+  {band:'Governance', hint:'sets the rules', items:[
+    {id:'gov-overview',label:'Overview'},
+    {id:'board',label:'Board',c:'3'},
+    {id:'policies',label:'Policies',c:'14'},
+    {id:'jobs',label:'Jobs register',c:'63'},
+    {id:'changes',label:'Changes & approvals',c:'3',hot:true},
+    {id:'improvements',label:'Improvements',c:'9',hot:true},
+    {id:'evidence',label:'Evidence log'}
+  ]},
+  {band:'The machine', hint:'phases, in order', items:[
+    {id:'leadgen',label:'Lead generation',n:'1',kids:[{id:'contacts',label:'Contacts'},{id:'events',label:'Events'},{id:'campaigns',label:'Campaigns'}]},
+    {id:'activation',label:'Lead activation',n:'2',kids:[{id:'pipeline',label:'Pipeline'},{id:'proposals',label:'Proposals'},{id:'onboarding',label:'Onboarding',c:'2'}]},
+    {id:'delivery',label:'Product delivery',n:'3',kids:[{id:'engagements',label:'Engagements'},{id:'placements',label:'Placements'},{id:'service',label:'Client service'}]}
+  ]},
+  {band:'Across the machine', hint:'runs through every phase', items:[
+    {id:'risk',label:'Risk',kids:[{id:'risk-register',label:'Risk register'},{id:'kris',label:'Key risk indicators'},{id:'incidents',label:'Incidents'}]},
+    {id:'compliance',label:'Compliance',kids:[{id:'screening',label:'Screening',c:'1'},{id:'obligations',label:'Obligations'},{id:'controls',label:'Controls',c:'2'}]},
+    {id:'finance',label:'Finance',kids:[{id:'invoices',label:'Invoices'},{id:'budget',label:'Budget'}]},
+    {id:'people',label:'People',kids:[{id:'team',label:'Team'},{id:'training',label:'Training'},{id:'conflicts',label:'Conflicts register'}]},
+    {id:'technology',label:'Technology',kids:[{id:'plumbline',label:'Plumbline'},{id:'flags',label:'Flags'},{id:'agents',label:'Agents'},{id:'vendors',label:'Vendors'}]}
+  ]}
+];
+var CRUMB={};
+NAV.forEach(function(b){b.items.forEach(function(it){CRUMB[it.id]=[b.band||'Home',it.label];(it.kids||[]).forEach(function(k){CRUMB[k.id]=[b.band,it.label,k.label]})})});
+
+/* ---------- generic CRUD pages ---------- */
+var C={
+ contacts:{title:'Contacts',job:'J02',jobName:'Grow the network',level:'Assist',flag:'live',clauses:'DPR-2.1 v1.0 · BAR-1.2 v1.1',control:['C-31 Consent recorded','ok'],risk:['R-07 Data protection','warn'],
+   cols:['Name','Organisation','Tier','Owner','Last touch'],rows:[['M. Darrell','Harbour Re','1','A. Moore','14 Oct'],['S. Okafor','Coral Analytics','1','J. Tucker','11 Oct'],['P. Varga','Northline Trust','2','R. Simmons','2 Oct'],['J. Pereira','Bluewater Capital','1','A. Moore','29 Sep']]},
+ events:{title:'Events',job:'J03',jobName:'Run events',level:'Record',flag:'live',clauses:'MKT-1.1 v1.0',control:['C-33 Speaker due diligence','ok'],risk:['R-08 Reputation','ok'],
+   cols:['Event','Date','Registrations','Status'],rows:[['Board effectiveness breakfast','6 Nov','42','Open'],['AI governance roundtable','20 Nov','18','Open'],['Founders demo day','4 Dec','7','Draft']]},
+ campaigns:{title:'Campaigns',job:'J04',jobName:'Publish the newsletter',level:'Record',flag:'live',clauses:'MKT-2.3 v1.0 · DPR-3.1 v1.0',control:['C-34 Unsubscribe honoured','ok'],risk:['R-07 Data protection','warn'],
+   cols:['Campaign','Audience','Sent','Opens'],rows:[['October letter','Tier 1 network','8 Oct','61%'],['Event invite: breakfast','Directors list','15 Oct','48%']]},
+ pipeline:{title:'Pipeline',job:'J05',jobName:'Qualify an opportunity',level:'Assist',flag:'live',clauses:'COI-4.1 v1.2 · BAR-1.2 v1.1',control:['C-12 Conflict check before proposal','ok'],risk:['R-04 Conflicts','ok'],
+   cols:['Opportunity','Client','Stage','Owner','Next step'],rows:[['Board seat search','Harbour Re','Qualified','A. Moore','Call 22 Oct'],['Governance review','Coral Analytics','Discovery','J. Tucker','Send scope'],['Interim CFO','Northline Trust','Proposal','R. Simmons','Review terms']]},
+ proposals:{title:'Proposals',job:'J13',jobName:'Propose an engagement',level:'Record',flag:'live',clauses:'BP-7.1 v1.0 · COI-4.2 v1.2',control:['C-13 Four-eyes on fees','ok'],risk:['R-04 Conflicts','ok'],
+   cols:['Proposal','Client','Value','Status'],rows:[['Interim CFO, 6 months','Northline Trust','$84,000','Awaiting approval'],['Board evaluation','Bluewater Capital','$22,000','Sent']]},
+ onboarding:{title:'Onboarding',job:'J29',jobName:'Know the client',level:'Assist',flag:'live',clauses:'AML-3.2 v1.3 · AML-4.2 v1.3',control:['C-14 File complete before approval','ok'],risk:['R-03 Financial crime','warn'],
+   cols:['Client','Type','Risk rating','File','Decision'],rows:[['Northline Trust','Trust','High','6 of 7 items','Waiting for MLRO'],['Coral Analytics','Company','Low','Complete','Approved 9 Oct'],['Bluewater Capital','Fund','Medium','4 of 7 items','Collecting']]},
+ engagements:{title:'Engagements',job:'J14',jobName:'Approve and run an engagement',level:'Record',flag:'live',clauses:'BP-7.2 v1.0 · OUT-2.1 v1.1',control:['C-15 Engagement letter signed','ok'],risk:['R-05 Operational','ok'],
+   cols:['Engagement','Client','Lead','Start','Status'],rows:[['Board advisory','Coral Analytics','J. Tucker','1 Sep','Active'],['Governance review','Harbour Re','A. Moore','15 Oct','Starting']]},
+ placements:{title:'Placements',job:'J01',jobName:'Fill a seat',level:'Record',flag:'live',clauses:'BP-3.3 v1.0 · FIT-1.4 v1.0',control:['C-16 Fit and proper on file','ok'],risk:['R-06 People','ok'],
+   cols:['Seat','Client','Candidate','Stage'],rows:[['Independent director','Harbour Re','Shortlist of 4','Interviews'],['Audit chair','Coral Analytics','Placed','Live since 1 Sep']]},
+ service:{title:'Client service',job:'J18',jobName:'Keep the client served',level:'Record',flag:'off',clauses:'BP-7.4 v1.0',control:['C-18 Quarterly client review','warn'],risk:['R-05 Operational','ok'],
+   cols:['Client','Last review','Satisfaction','Owner'],rows:[['Coral Analytics','30 Sep','9 / 10','J. Tucker']]},
+ kris:{title:'Key risk indicators',job:'J27',jobName:'Monitor risk',level:'Assist',flag:'live',clauses:'RA-2.1 v1.0 · ERM-6.2 v1.0',control:['C-25 KRI breach escalated','ok'],risk:['All categories','acc'],
+   cols:['Indicator','Now','Limit','State'],rows:[['Screening backlog (J23)','1.4 days','3 days','Within'],['Overdue client refreshes','2','0','Breach'],['Vendors without exit plan','1','0','Breach'],['Policies past review','0','0','Within']]},
+ incidents:{title:'Incidents',job:'J26',jobName:'Handle an incident or breach',level:'Record',flag:'live',clauses:'BCP-3.1 v1.0 · DPR-5.1 v1.0',control:['C-26 Logged within 24 hours','ok'],risk:['R-05 Operational','ok'],
+   cols:['Incident','Raised','Severity','Status'],rows:[['Search suggestions showed another client name (from feedback FB-0151)','19 Oct','High','Investigating'],['Duplicate HubSpot sync run','2 Oct','Low','Closed']]},
+ screening:{title:'Screening',job:'J23',jobName:'Screen clients and consultants',level:'Assist',flag:'live',clauses:'AML-4.2 v1.3 · AML-4.4 v1.1',control:['C-14 Screening completeness','ok'],risk:['R-03 Financial crime','warn'],
+   cols:['Subject','Type','Result','Decision'],rows:[['Consultant C-0412','Refresh','Clear','Auto-filed (rule AML-4.2.3)'],['Client K-0087','Onboarding','Possible match','Waiting for MLRO'],['Client K-0091','Onboarding','Clear','Prepared for review']]},
+ obligations:{title:'Obligations register',job:'J21',jobName:'Keep obligations current',level:'Record',flag:'live',clauses:'CMP-1.1 v1.0',control:['C-21 Verified within 12 months','warn'],risk:['R-02 Regulatory','ok'],
+   cols:['Obligation','Source','Owner','Last verified'],rows:[['Annual CSP return','CSP Act','CRCO','Mar 2026'],['PIPA overseas transfer assessment','PIPA s.15','CRCO','Not yet'],['Material outsourcing notice','Outsourcing Code','CRCO','Sep 2026']]},
+ controls:{title:'Controls',job:'J24',jobName:'Test controls',level:'Record',flag:'live',clauses:'CMP-3.2 v1.0',control:['C-09, C-17 due','warn'],risk:['All categories','acc'],
+   cols:['Control','Proves','Owner','Last test','Result'],rows:[['C-14 Screening completeness','AML-4.2','MLRO','Sep 2026','Pass'],['C-09 Access review','DPR-4.1','CRCO','Jun 2026','Due'],['C-17 Fee four-eyes','BP-7.1','CRCO','Jul 2026','Due']]},
+ invoices:{title:'Invoices',job:'J38',jobName:'Bill and collect',level:'Record',flag:'live',clauses:'FIN-2.1 v1.0',control:['C-38 Invoice from engagement record','ok'],risk:['R-01 Financial','ok'],
+   cols:['Invoice','Client','Amount','Due','Status'],rows:[['INV-0042','Coral Analytics','$7,500','31 Oct','Sent'],['INV-0041','Harbour Re','$12,000','15 Oct','Overdue']]},
+ budget:{title:'Budget',job:'J39',jobName:'Plan and track the budget',level:'Record',flag:'off',clauses:'FIN-1.1 v1.0',control:['C-39 Monthly variance review','ok'],risk:['R-01 Financial','ok'],
+   cols:['Line','Budget YTD','Actual YTD','Variance'],rows:[['Technology','$18,000','$15,400','-14%'],['Events','$9,000','$10,100','+12%']]},
+ team:{title:'Team',job:'J40',jobName:'Administer people and access',level:'Record',flag:'live',clauses:'ACC-1.3 v1.0',control:['C-40 No self-granted access','ok'],risk:['R-06 People','ok'],
+   cols:['Person','Role','Access areas','Since'],rows:[['Sam Ward','Operator','admin, ops','Jan 2026'],['R. Simmons','Director','board, approvals','Jan 2026'],['J. Tucker','Director','board, approvals','Jan 2026'],['A. Moore','Director','board, approvals','Jan 2026']]},
+ training:{title:'Training',job:'J28',jobName:'Keep people trained',level:'Record',flag:'live',clauses:'AML-8.1 v1.3',control:['C-28 Annual AML training','ok'],risk:['R-03 Financial crime','warn'],
+   cols:['Person','Course','Completed','Next due'],rows:[['All staff','AML/ATF annual','Mar 2026','Mar 2027']]},
+ conflicts:{title:'Conflicts register',job:'J25',jobName:'Manage conflicts',level:'Record',flag:'live',clauses:'COI-2.1 v1.2',control:['C-12 Conflict check before proposal','ok'],risk:['R-04 Conflicts','ok'],
+   cols:['Declared by','Interest','Mitigation','Reviewed'],rows:[['A. Moore','Shareholding in a client','Recused from engagement','Oct 2026']]},
+ flags:{title:'Flags',job:'J60',jobName:'Govern automation',level:'Record',flag:'live',clauses:'FLG-1.1 v1.0',control:['C-60 Flag changes logged','ok'],risk:['R-09 Technology','ok'],
+   cols:['Flag','Job · level','State','Audience','Changed'],rows:[['screening.assist','J23 · Assist','live','MLRO, CRCO','12 Oct'],['monitoring.agent','J30 · Agent','shadow','CRCO','2 Oct'],['service.record','J18 · Record','off','—','—']]},
+ agents:{title:'Agents',job:'J61',jobName:'Register and test agents',level:'Record',flag:'live',clauses:'AI-2.1 v1.0',control:['C-61 Envelope in code','ok'],risk:['R-09 Technology','ok'],
+   cols:['Agent','Model','Steps','Envelope','Owner'],rows:[['Monitoring triage','Claude (via gateway)','J30-P2','read alerts; draft only','MLRO']]},
+ vendors:{title:'Vendors',job:'J45',jobName:'Manage outsourcing',level:'Record',flag:'live',clauses:'OUT-2.2 v1.1',control:['C-45 Exit plan on file','warn'],risk:['R-10 Outsourcing','bad'],
+   cols:['Vendor','Role','Data location','Exit plan','Material'],rows:[['Supabase','Database, sign-in','US (to review)','Yes','Yes'],['Vercel','Hosting','Edge','Yes','No'],['Resend','Email','US','No','No'],['Anthropic','Model provider','US','Yes','Yes']]},
+ policies:{title:'Policies',job:'J11',jobName:'Maintain the governance chain',level:'Record',flag:'live',clauses:'GOV-1.1 v1.0',control:['C-11 Reviewed on schedule','ok'],risk:['R-02 Regulatory','ok'],
+   cols:['Id','Policy','Version','Status','Approver','Next review'],rows:[['AML','AML/ATF','1.3','Effective','Board','Mar 2027'],['COI','Conflicts of interest','1.2','Effective','Board','Mar 2027'],['OUT','Outsourcing','1.2','Effective','Board','Oct 2027'],['TEC','Technology (adopts Plumbline)','0.1','Draft','Board','—']]},
+ jobs:{title:'Jobs register',job:'J11',jobName:'Maintain the governance chain',level:'Record',flag:'live',clauses:'GOV-4.1 v1.0',control:['C-11 Every feature names a job','ok'],risk:['R-02 Regulatory','ok'],
+   cols:['Id','Job','Menu home','Level','Flag','Owner'],rows:[['J02','Grow the network','Lead generation','Assist','live','A. Moore'],['J05','Qualify an opportunity','Lead activation','Assist','live','J. Tucker'],['J29','Know the client','Lead activation','Assist','live','CRCO'],['J01','Fill a seat','Product delivery','Record','live','R. Simmons'],['J23','Screen clients and consultants','Compliance','Assist','live','MLRO'],['J30','Ongoing monitoring','Compliance','Agent (shadow)','shadow','MLRO']]},
+ evidence:{title:'Evidence log',readOnly:true,job:'J11',jobName:'Keep the record',level:'Record',flag:'live',clauses:'EVD-1.1 v1.0',control:['C-50 Append-only enforced','ok'],risk:['R-02 Regulatory','ok'],
+   cols:['When','Who','Job · step','What','Under'],rows:[['19 Oct 22:14','Plumbline run','—','Report written, 3 asks','Plumbline v0.4.0'],['19 Oct 16:02','CRCO','J27','Accepted maturity: R-03 to Moderate','ERM-6.2 v1.0'],['19 Oct 11:40','Analyst','J23 · P1.3','Screening K-0091 prepared','AML-4.2 v1.3'],['18 Oct 09:15','A. Moore','J05','Conflict check passed: Northline Trust','COI-4.1 v1.2']]}
+};
+
+/* ---------- state ---------- */
+var S={page:'home',role:'operator',open:{}};
+try{var saved=JSON.parse(localStorage.getItem('gae2')||'{}');if(saved.page)S.page=saved.page;if(saved.role)S.role=saved.role;if(saved.open)S.open=saved.open}catch(e){}
+var h=(location.hash||'').replace('#','');if(h&&(CRUMB[h]))S.page=h;
+function save(){try{localStorage.setItem('gae2',JSON.stringify(S))}catch(e){}}
+
+/* ---------- sidebar ---------- */
+function parentOf(id){var p=null;NAV.forEach(function(b){b.items.forEach(function(it){(it.kids||[]).forEach(function(k){if(k.id===id)p=it.id})})});return p}
+function renderSide(){
+  var po=parentOf(S.page); if(po)S.open[po]=true;
+  var html='';
+  NAV.forEach(function(b){
+    html+='<div class="band">'+(b.band?'<div class="band-h"><span class="label">'+b.band+'</span><span class="hint">'+b.hint+'</span></div>':'')+'<nav class="nav">';
+    b.items.forEach(function(it){
+      if(it.kids){
+        var open=!!S.open[it.id];
+        html+='<a href="#" class="parent" data-toggle="'+it.id+'" aria-expanded="'+open+'"><span><span class="car">▸</span> '+(it.n?'<span class="phase-n">'+it.n+'</span>':'')+it.label+'</span></a>';
+        html+='<div class="kids"'+(open?'':' hidden')+'>';
+        it.kids.forEach(function(k){html+=link(k)});
+        html+='</div>';
+      } else html+=link(it);
+    });
+    html+='</nav></div>';
+  });
+  $('#side').innerHTML=html;
+}
+function link(it){return '<a href="#'+it.id+'" data-page="'+it.id+'"'+(S.page===it.id?' class="on" aria-current="page"':'')+'><span>'+it.label+'</span>'+(it.c?'<span class="c'+(it.hot?' hot':'')+'">'+it.c+'</span>':'')+'</a>'}
+
+/* ---------- shared bits ---------- */
+function crumb(id){return '<div class="crumb label">'+CRUMB[id].map(function(x){return '<span>'+x+'</span>'}).join('')+'</div>'}
+function strip(c){
+  var fl=c.flag==='live'?'ok':c.flag==='shadow'?'warn':'';
+  return '<div class="gstrip" aria-label="Governance for this page"><span class="chip">Job <b class="mono">'+c.job+'</b>&nbsp;'+esc(c.jobName)+'</span><span class="sep">|</span>'+
+   '<span class="chip acc">Level: '+c.level+'</span><span class="chip '+fl+'"><span class="dot"></span>Flag '+c.flag+'</span><span class="sep">|</span>'+
+   '<span>Carries out <span class="mono">'+c.clauses+'</span></span><span class="sep">|</span>'+
+   '<span class="chip '+c.control[1]+'">'+c.control[0]+'</span><span class="chip '+c.risk[1]+'">Risk '+c.risk[0]+'</span><span class="sep">|</span><span class="note">Last evidence 2 h ago</span></div>';
+}
+function foot(){return '<div class="vfoot"><span>Plumbline v0.4.0</span><span>Policies effective 2026-10-01</span><span>Build 4f2a91c</span><span>Flags set 2026-10-12</span></div>'}
+function stateChip(v){var m={Within:'ok',Breach:'bad',Clear:'ok','Possible match':'warn',Pass:'ok',Due:'warn',Overdue:'bad',Effective:'ok',Draft:'',live:'ok',shadow:'warn',off:'',Approved:'ok',Investigating:'warn',Closed:'ok',High:'bad',Medium:'warn',Low:'ok'};return m.hasOwnProperty(v)?'<span class="chip '+m[v]+'">'+esc(v)+'</span>':esc(v)}
+
+/* ---------- pages ---------- */
+function pCrud(id){
+  var c=C[id];
+  var rows=c.rows.map(function(r,i){return '<tr class="click" data-row="'+i+'" tabindex="0">'+r.map(function(v,j){return '<td>'+(j===0?'<b>'+esc(v)+'</b>':stateChip(v))+'</td>'}).join('')+'</tr>'}).join('');
+  return '<div class="page">'+crumb(id)+
+   '<div class="ph"><div class="t"><h1>'+c.title+'</h1><span class="note">'+c.rows.length+' records</span></div><div class="btns">'+
+   (c.readOnly?'<span class="chip">Append-only: no edit or delete, by design</span>':'<button class="btn">Export</button><button class="btn primary" data-new="'+id+'">New</button>')+'</div></div>'+
+   strip(c)+
+   '<div class="panel"><div class="toolbar"><input placeholder="Filter '+c.title.toLowerCase()+'…" data-filter aria-label="Filter"><button class="btn">Owner ▾</button><button class="btn">Status ▾</button></div>'+
+   '<div class="tbl-wrap"><table><thead><tr>'+c.cols.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody data-tbody="'+id+'">'+rows+'</tbody></table></div>'+
+   '<div class="pager note"><span>Showing 1 to '+c.rows.length+'</span><span>Click a row to open it</span></div></div>'+foot()+'</div>';
+}
+function pParent(id){
+  var it=null;NAV.forEach(function(b){b.items.forEach(function(x){if(x.id===id)it=x})});
+  return '<div class="page">'+crumb(id)+'<div class="ph"><div class="t"><h1>'+it.label+'</h1><span class="note">'+(it.n?'Phase '+it.n+' of the machine':'Runs across every phase')+'</span></div></div>'+
+   '<div class="grid g3">'+it.kids.map(function(k){var c=C[k.id]||{};return '<a href="#'+k.id+'" data-page="'+k.id+'" class="panel" style="text-decoration:none;color:inherit;display:grid;gap:6px"><span class="label">'+(c.job?'Job '+c.job:'')+'</span><h3>'+k.label+'</h3><span class="note">'+(c.rows?c.rows.length+' records · level '+c.level:'')+'</span></a>'}).join('')+'</div>'+foot()+'</div>';
+}
+
+function decisionsBoard(){return '<div class="list">'+
+ item('acc','Approve AML policy v2.0','Major: screening refresh moves from 12 to 6 months for high-risk clients (<span class="mono">screening.refresh_months.high</span>). Proposed by the CRCO after 3 pieces of user feedback and one near miss. Diagnosis: 2 procedures and 1 control to re-sign.','<button class="btn primary" data-act="Approved">Approve</button><button class="btn" data-act="Sent back to the CRCO">Discuss</button>')+
+ item('warn','Renew or close exception STK-2 (backups)','Nightly backups to own storage are not yet in place. Exception expires 30 Nov. Operator proposes 30 days to close.','<button class="btn primary" data-act="Renewed to 31 Dec">Renew 30 days</button>')+
+ item('acc','Adopt Plumbline v0.4','Adds the standard left menu (Governance, The machine, Across the machine) and in-app feedback. 15 new gaps for this entity; plan attached.','<button class="btn primary" data-act="Adopted v0.4">Adopt</button>')+'</div>'}
+function matured(){return '<div class="list">'+
+ item('mat','Risk framework: R-03 Financial crime lowered to Moderate','Three screening controls automated (J23 at Assist), 90 days without exceptions. Accepted by the CRCO on 9 Oct.','<span class="chip mat">For noting</span>')+
+ item('mat','Policy: Outsourcing v1.2 adds model providers','Anthropic entered in the outsourcing register with data location and exit plan.','<span class="chip mat">Approved 2 Oct</span>')+
+ item('ok','Jobs: J22 Filings calendar moved from Record to Assist','Derived from the obligations register; shadow run matched the manual calendar for 6 weeks.','<span class="chip ok">Gate signed</span>')+
+ item('ok','System: 29 Plumbline clauses closed','All P1 access and data clauses met; RLS tests now block every merge.','<span class="chip ok">Evidence</span>')+'</div>'}
+function item(st,what,meta,right){return '<div class="item"><span class="stripe '+st+'"></span><div><div class="what">'+what+'</div><div class="meta">'+meta+'</div></div>'+(right.indexOf('<button')>-1?'<div class="btns">'+right+'</div>':right)+'</div>'}
+function appetite(){
+  var risks=[['Financial crime',1,1.2],['Regulatory',1,0.8],['Conflicts of interest',1,0.6],['Operational resilience',2,1.5],['Outsourcing and vendors',1,2.1],['Data protection',1,1.9],['Technology',2,1.4],['Reputation',1,0.9]];
+  var h='<div class="scale-axis"><span></span><span class="ticks"><span>Low</span><span>Moderate</span><span>High</span><span>Very high</span></span><span></span></div>';
+  risks.forEach(function(r){var over=r[2]>r[1]+0.5,cells='';for(var i=0;i<4;i++)cells+='<span class="'+(i<=r[1]?'in':'')+'"></span>';
+    h+='<div class="app-row"><span>'+r[0]+'</span><span class="scale">'+cells+'<span class="res" style="left:'+((r[2]+0.5)/4*100).toFixed(1)+'%;background:var('+(over?'--bad':'--ink')+')"></span></span><span class="chip '+(over?'bad':'ok')+'">'+(over?'Above':'Within')+'</span></div>'});
+  return h;
+}
+function tiles(arr){return '<div class="grid g4">'+arr.map(function(t){return '<div class="panel tile"><span class="label">'+t[0]+'</span><span class="num tnum">'+t[1]+'</span><span class="sub">'+t[2]+'</span></div>'}).join('')+'</div>'}
+
+function pHome(){
+  var r=S.role, head='<div class="page">'+crumb('home');
+  if(r==='director') return head+'<div class="ph"><div class="t"><h1>Good evening, Director</h1><span class="note">Harbour Advisory Ltd · next board meeting 12 Nov</span></div></div>'+
+    tiles([['Decisions for you','3','Due before 12 Nov'],['Risks within appetite','6 / 8','Outsourcing, data protection above'],['Matured this quarter','11','4 for your noting'],['Plumbline conformance','41 / 75','Up from 12 in August']])+
+    '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Decisions for the board</h2><span class="chip acc">3 open</span></div>'+decisionsBoard()+'</div>'+
+    '<div class="panel"><div class="panel-head"><h2>Position against risk appetite</h2><span class="note">Residual ● against appetite band</span></div>'+appetite()+'</div></div>'+
+    '<div class="panel"><div class="panel-head"><h2>What matured</h2><span class="note">Every line links to its evidence</span></div>'+matured()+'</div>'+foot()+'</div>';
+  if(r==='crco') return head+'<div class="ph"><div class="t"><h1>Good evening, CRCO</h1><span class="note">Your queues, from the governance chain</span></div></div>'+
+    tiles([['To re-sign','5','Below AML v1.3 after its change'],['Control tests due','2','C-09, C-17 this month'],['Obligations to verify','3','Past last-verified date'],['Feedback tagged risk','2','Triaged last night']])+
+    '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Maturity proposals</h2><span class="chip mat">3 new</span></div><div class="list">'+
+    item('mat','Lower residual risk R-07 Data protection from High to Medium','Control C-09 (access reviews) automated 94 days ago, 0 exceptions; DAT-1 and DAT-2 met in all apps. Board sees it for noting.','<button class="btn primary" data-act="Accepted · board notified">Accept</button><button class="btn" data-act="Kept at High">Keep</button>')+
+    item('mat','Set a numeric limit for appetite statement RA-2.1','6 months of KRI data for the screening backlog (median 1.2 days). Proposed <span class="mono">kri.screening_backlog_days.max = 3</span>. Needs board approval.','<button class="btn primary" data-act="Proposed to the board">Propose to board</button>')+
+    item('warn','Gate: J30 Ongoing monitoring to Agent in envelope','Shadow run 8 weeks; agent matched MLRO on 97% of 312 alerts; kill switch tested 14 Oct. Needs CRCO and MLRO.','<button class="btn primary" data-act="Signed · waiting for MLRO">Sign</button>')+'</div></div>'+
+    '<div class="panel"><div class="panel-head"><h2>Risk-tagged feedback</h2><span class="chip bad">1 urgent</span></div><div class="list">'+
+    item('bad','"I could see another client\'s name in the search suggestions"','Onboarding (J29). Possible information-barrier breach (DAT-1). Incident opened; the nightly run paused changes on that page.','<button class="btn primary" data-go="incidents">Open incident</button>')+
+    item('warn','"Refresh dates don\'t match what the policy says"','Screening (J23), 3 reports. Procedure J23-P1 out of step with AML-4.2 v1.3. Sent to the job owner.','<span class="chip warn">Procedure</span>')+'</div></div></div>'+foot()+'</div>';
+  return head+'<div class="ph"><div class="t"><h1>Good evening, Sam</h1><span class="note">Operator desk · all entities · last Plumbline run 22:11</span></div></div>'+
+    '<div class="panel"><div class="panel-head"><h2>Portfolio</h2><span class="note">4 apps checked · 3 changes · 4 asks</span></div><div class="tbl-wrap"><table><thead><tr><th>Entity · app</th><th>Mode</th><th class="r">Plumbline met</th><th class="r">P1 gaps</th><th class="r">Exceptions</th><th class="r">New feedback</th><th>Last night</th></tr></thead><tbody>'+
+    '<tr><td>Harbour Advisory · app.harbour.example</td><td>'+stateChip('live').replace('live','do')+'</td><td class="r tnum">41 / 75</td><td class="r tnum">3</td><td class="r tnum">1</td><td class="r tnum">5</td><td>Closed DAT-2 on <span class="mono">plumbline/2026-11-03-DAT-2</span></td></tr>'+
+    '<tr><td>Harbour Ventures · ventures.harbour.example</td><td><span class="chip ok">do</span></td><td class="r tnum">33 / 75</td><td class="r tnum">6</td><td class="r tnum">0</td><td class="r tnum">1</td><td>Drafted risk appetite (GOV-6)</td></tr>'+
+    '<tr><td>Coral Labs · app.corallabs.example</td><td><span class="chip ok">do</span></td><td class="r tnum">38 / 75</td><td class="r tnum">4</td><td class="r tnum">0</td><td class="r tnum">3</td><td>Added RLS test for partner API</td></tr>'+
+    '<tr><td>Family office · home.example</td><td><span class="chip">report</span></td><td class="r tnum">14 / 75</td><td class="r tnum">17</td><td class="r tnum">2</td><td class="r tnum">0</td><td>Reported only</td></tr></tbody></table></div></div>'+
+    '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Waiting for your yes</h2><span class="chip acc">4</span></div><div class="list">'+
+    item('acc','1 · Advisory: self-grant trigger on <span class="mono">user_areas</span> (IAM-3)','Migration + 2 tests · 84 lines · undo: drop trigger','<button class="btn primary" data-act="Approved · made tonight">Yes</button><button class="btn" data-act="Declined">No</button>')+
+    item('acc','2 · Ventures: <span class="mono">check:governance</span> in CI (GOV-4)','Workflow step · 12 lines · copied from Coral Labs','<button class="btn primary" data-act="Approved">Yes</button>')+
+    item('acc','3 · Push 3 branches and open pull requests','advisory DAT-2, labs RLS test, ventures GOV-6 draft','<button class="btn primary" data-act="Pushed · PRs opened">Yes</button>')+
+    item('mat','4 · Plumbline proposal from feedback FB-0142','Make refresh periods a parameter in every app that screens. Minor version.','<button class="btn primary" data-act="Accepted">Accept</button>')+'</div></div>'+
+    '<div class="panel"><div class="panel-head"><h2>Feedback, triaged last night</h2><span class="note">9 new · 2 merged</span></div><div class="list">'+
+    item('bad','"I could see another client\'s name in the search suggestions"','Harbour Advisory · Onboarding · risk: possible barrier breach. Routed to the CRCO and you.','<span class="chip bad">Urgent</span>')+
+    item('acc','"Upload button does nothing on my phone"','Ventures · data room · reproduced in staging · fix proposed as an ask.','<span class="chip acc">App fix</span>')+
+    item('ok','"Would love the deck version on the invite email"','Ventures · invites · added to the job\'s ideas.','<span class="chip">Idea</span>')+'</div></div></div>'+foot()+'</div>';
+}
+
+function pOverview(){
+  return '<div class="page">'+crumb('gov-overview')+'<div class="ph"><div class="t"><h1>How this app is governed</h1><span class="note">The same structure in every entity\'s app</span></div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>The menu follows the business</h2></div><div class="bands">'+
+   '<div class="band-card"><span class="label">Governance</span><p class="note">Sets the rules every other part follows.</p><div class="across"><div>Board</div><div>Policies</div><div>Jobs register</div><div>Changes & approvals</div><div>Improvements</div><div>Evidence log</div></div></div>'+
+   '<div class="band-card"><span class="label">The machine</span><p class="note">The phases the business moves a customer through, in order. Every job here names its phase.</p><div class="machine"><div>1 · Lead generation</div><div>2 · Lead activation</div><div>3 · Product delivery</div></div><p class="note">Harbour Advisory: network, events, newsletter → qualify, propose, onboard → engagements, placements, service.</p></div>'+
+   '<div class="band-card"><span class="label">Across the machine</span><p class="note">Functions that run through every phase.</p><div class="across"><div>Risk</div><div>Compliance</div><div>Finance</div><div>People</div><div>Technology</div></div></div>'+
+  '</div></div>'+
+  '<div class="panel diagram"><div class="panel-head"><h2>The improvement loop, run every night</h2></div>'+
+  '<svg viewBox="0 0 900 270" role="img" aria-label="Signals, nightly triage, proposal routed by level, approval, change shipped, evidence, and a maturity signal back to the board and CRCO"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker><marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah mat" d="M0,0 L10,5 L0,10 z"/></marker></defs>'+
+  box(10,'','1 · IN','Signals',['User feedback','Control results, KRIs','Incidents, Plumbline gaps'])+box(160,'acc','2 · NIGHTLY','Claude triage',['Dedupe, classify','Link to job, clause,','risk and level'])+box(310,'','3 · PROPOSE','Proposal',['What, why, impact','Diagnosis attached','Routed by level'])+box(460,'','4 · DECIDE','Right approver',['Operator, job owner,','CRCO or board','One tap, with MFA'])+box(610,'','5 · SHIP','Change lands',['Code behind a flag,','procedure or policy','version bumped'])+box(760,'','6 · RECORD','Evidence',['Who, what, when,','under which version','Never edited'])+
+  '<path class="arrow" d="M138,82 H158" marker-end="url(#ah)"/><path class="arrow" d="M288,82 H308" marker-end="url(#ah)"/><path class="arrow" d="M438,82 H458" marker-end="url(#ah)"/><path class="arrow" d="M588,82 H608" marker-end="url(#ah)"/><path class="arrow" d="M738,82 H758" marker-end="url(#ah)"/>'+
+  '<path class="arrow mat" d="M824,134 V200 H74 V138" marker-end="url(#ahm)"/><rect class="n-box mat" x="300" y="182" width="300" height="38" rx="19"/><text class="m-t" x="450" y="206" text-anchor="middle">7 · Maturity signal to the CRCO and board</text>'+
+  '<text class="n-s" x="450" y="248" text-anchor="middle">"Control C-09 is now automated with 90 clean days: propose lowering residual risk R-07 to Medium."</text></svg></div>'+
+  '<div class="panel"><div class="panel-head"><h2>Who approves what</h2></div><div class="tbl-wrap"><table><thead><tr><th>A proposal that changes…</th><th>Goes to</th><th>Then shown to</th></tr></thead><tbody>'+
+  '<tr><td>App code, tests, CI</td><td>Operator</td><td>Job owner, weekly</td></tr><tr><td>A procedure</td><td>Job owner</td><td>CRCO if regulated</td></tr><tr><td>A control, or a gate to a higher level</td><td>CRCO</td><td>Board, for noting</td></tr><tr><td>A policy or a risk rating</td><td>CRCO proposes</td><td>Board approves</td></tr><tr><td>Risk appetite, framework, mandate, a Plumbline major</td><td>Board</td><td>Regulator where required</td></tr></tbody></table></div></div>'+foot()+'</div>';
+}
+function box(x,cls,k,t,lines){return '<rect class="n-box '+cls+'" x="'+x+'" y="30" width="128" height="104" rx="8"/><text class="n-k" x="'+(x+12)+'" y="52">'+k+'</text><text class="n-t" x="'+(x+12)+'" y="72">'+t+'</text>'+lines.map(function(l,i){return '<text class="n-s" x="'+(x+12)+'" y="'+(90+i*14)+'">'+l+'</text>'}).join('')}
+
+function pBoard(){return '<div class="page">'+crumb('board')+'<div class="ph"><div class="t"><h1>Board</h1><span class="note">Q4 2026 · pack generated from live records</span></div><div class="btns"><button class="btn">Minutes</button><button class="btn primary">Open the Q4 pack</button></div></div>'+
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Decisions</h2><span class="chip acc">3 open</span></div>'+decisionsBoard()+'</div><div class="panel"><div class="panel-head"><h2>Position against risk appetite</h2></div>'+appetite()+'</div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>What matured this quarter</h2></div>'+matured()+'</div>'+foot()+'</div>'}
+
+function pChanges(){return '<div class="page">'+crumb('changes')+'<div class="ph"><div class="t"><h1>Changes & approvals</h1><span class="note">Every change to the chain or the app, routed to its approver</span></div><div class="btns"><button class="btn primary" data-new="changes">Propose a change</button></div></div>'+
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Change</th><th>Level</th><th>Source</th><th>Approver</th><th>Diagnosis</th><th>Status</th><th></th></tr></thead><tbody>'+
+  '<tr><td><b>AML policy v2.0</b><div class="note">High-risk refresh 12 → 6 months</div></td><td>3 Policy</td><td>CRCO, from feedback</td><td>Board</td><td>2 procedures, 1 control to re-sign</td><td><span class="chip warn">Waiting</span></td><td class="btns"><button class="btn" data-act="Opened">Open</button></td></tr>'+
+  '<tr><td><b>Procedure J23-P1 v1.4</b><div class="note">Step 3 matches AML-4.2</div></td><td>4 Procedure</td><td>Nightly run</td><td>Job owner (MLRO)</td><td>Clean</td><td><span class="chip warn">Waiting</span></td><td class="btns"><button class="btn primary" data-act="Approved">Approve</button></td></tr>'+
+  '<tr><td><b>Self-grant trigger</b><div class="note">IAM-3 · migration</div></td><td>App</td><td>Plumbline run</td><td>Operator</td><td>Tests added</td><td><span class="chip warn">Waiting</span></td><td class="btns"><button class="btn primary" data-act="Approved">Approve</button></td></tr>'+
+  '<tr><td><b>Outsourcing v1.2</b></td><td>3 Policy</td><td>CRCO</td><td>Board</td><td>Clean</td><td><span class="chip ok">Effective</span></td><td></td></tr></tbody></table></div></div>'+foot()+'</div>'}
+
+function pImprovements(){return '<div class="page">'+crumb('improvements')+'<div class="ph"><div class="t"><h1>Improvements</h1><span class="note">Feedback from every page, triaged nightly and routed by the chain</span></div></div>'+
+  tiles([['New this week','9','2 duplicates merged'],['Became changes','4','Since 1 Oct'],['Risk-tagged','2','1 urgent'],['Median time to answer','2 days','Submitter told the outcome']])+
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Triage</h2></div><div class="list">'+
+  item('bad','FB-0151 · "I could see another client\'s name in the search suggestions"','Onboarding · Feels risky · routed to CRCO · incident opened','<span class="chip bad">Policy or risk</span>')+
+  item('warn','FB-0142 · "Refresh dates don\'t match what the policy says"','Screening · 3 reports merged · procedure J23-P1 v1.4 proposed','<span class="chip warn">Procedure</span>')+
+  item('acc','FB-0148 · "Filter resets when I open a record"','Pipeline · App fix · Plumbline Do change on a branch','<span class="chip acc">App fix</span>')+
+  item('ok','FB-0139 · "Show the client\'s risk rating on the pipeline card"','Pipeline · Idea · added to J05 ideas','<span class="chip">Idea</span>')+'</div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>How each piece is routed</h2></div><div style="display:grid;gap:8px">'+
+  '<div class="route"><span class="chip acc">App fix</span><div><b>Operator</b><div class="note">Becomes a Plumbline Do or Ask change on a branch.</div></div></div>'+
+  '<div class="route"><span class="chip warn">Procedure</span><div><b>Job owner</b><div class="note">A procedure proposal with its diagnosis.</div></div></div>'+
+  '<div class="route"><span class="chip bad">Policy or risk</span><div><b>CRCO</b>, then board<div class="note">Logged as a risk event; reaches the CRCO in the next run.</div></div></div>'+
+  '<div class="route"><span class="chip">Idea</span><div><b>Roadmap</b><div class="note">Scored at the next importance-and-satisfaction review.</div></div></div></div>'+
+  '<p class="note" style="margin-top:10px">The nightly run reads only the de-identified export (FBK-6): no names, emails or record ids.</p></div></div>'+foot()+'</div>'}
+
+function pRiskRegister(){return '<div class="page">'+crumb('risk-register')+'<div class="ph"><div class="t"><h1>Risk register</h1><span class="note">Level 2 of the chain · ratings against level 1 appetite</span></div><div class="btns"><button class="btn primary" data-new="risk-register">New risk</button></div></div>'+
+  strip({job:'J27',jobName:'Monitor risk',level:'Assist',flag:'live',clauses:'ERM-6.1 v1.0 · RA-2.1 v1.0',control:['C-25 Quarterly rating review','ok'],risk:['All categories','acc']})+
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Position against appetite</h2></div>'+appetite()+'</div>'+
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Risk</th><th>Owner</th><th>Residual</th><th>Controls</th></tr></thead><tbody>'+
+  '<tr><td><b>R-03</b> Financial crime</td><td>MLRO</td><td>'+stateChip('Medium')+'</td><td>C-14, C-28</td></tr><tr><td><b>R-07</b> Data protection</td><td>CRCO</td><td>'+stateChip('High')+'</td><td>C-09, C-31</td></tr><tr><td><b>R-10</b> Outsourcing</td><td>CRCO</td><td>'+stateChip('High')+'</td><td>C-45</td></tr><tr><td><b>R-04</b> Conflicts</td><td>CRCO</td><td>'+stateChip('Low')+'</td><td>C-12</td></tr></tbody></table></div></div></div>'+foot()+'</div>'}
+
+function pPlumbline(){return '<div class="page">'+crumb('plumbline')+'<div class="ph"><div class="t"><h1>Plumbline</h1><span class="note">How this app conforms to the shared standard, pinned to v0.4.0</span></div></div>'+
+  tiles([['Clauses met','41 / 75','Up from 12 in August'],['P1 gaps','3','IAM-3, DEL-4, STK-2'],['Exceptions','1','STK-2 expires 30 Nov'],['Last nightly run','22:11','1 change, 1 ask']])+
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Group</th><th class="r">Met</th><th class="r">Partial</th><th class="r">Gap</th><th>Next up</th></tr></thead><tbody>'+
+  '<tr><td>GOV Governance</td><td class="r tnum">6</td><td class="r tnum">2</td><td class="r tnum">2</td><td>GOV-9 approvals in the app</td></tr><tr><td>IAM Access</td><td class="r tnum">4</td><td class="r tnum">1</td><td class="r tnum">1</td><td>IAM-3 self-grant trigger (ask open)</td></tr><tr><td>DAT Data</td><td class="r tnum">6</td><td class="r tnum">0</td><td class="r tnum">0</td><td>—</td></tr><tr><td>UIX App shell</td><td class="r tnum">3</td><td class="r tnum">3</td><td class="r tnum">3</td><td>UIX-3 left menu bands</td></tr><tr><td>FBK Feedback</td><td class="r tnum">0</td><td class="r tnum">1</td><td class="r tnum">5</td><td>FBK-6 de-identified export</td></tr></tbody></table></div></div>'+foot()+'</div>'}
+
+var PAGES={home:pHome,'gov-overview':pOverview,board:pBoard,changes:pChanges,improvements:pImprovements,'risk-register':pRiskRegister,plumbline:pPlumbline};
+
+/* ---------- render ---------- */
+function render(){
+  renderSide();
+  var id=S.page, html;
+  if(PAGES[id]) html=PAGES[id]();
+  else if(C[id]) html=pCrud(id);
+  else html=pParent(id);
+  $('#main').innerHTML=html; $('#main').scrollTop=0;
+  $('#role').value=S.role; save();
+}
+function go(id){S.page=id;closeSide();render()}
+
+/* drawer */
+function openDrawer(html){$('#drawer').innerHTML=html;$('#drawer').hidden=false;var x=$('#drawer .x');if(x)x.focus()}
+function closeDrawer(){$('#drawer').hidden=true}
+function recordDrawer(id,i){
+  var c=C[id], r=c.rows[i];
+  openDrawer('<div class="dr-h"><div><span class="label">'+c.title+' · record</span><h2 style="margin-top:4px">'+esc(r[0])+'</h2></div><button class="x" data-close aria-label="Close">✕</button></div>'+
+   '<div class="dr-b"><dl class="fields">'+c.cols.map(function(h,j){return '<dt>'+h+'</dt><dd>'+stateChip(r[j])+'</dd>'}).join('')+'</dl>'+
+   '<div><span class="label">Governance</span><div style="margin-top:6px">'+strip(c)+'</div></div>'+
+   '<div><span class="label">History (evidence log)</span><div class="hist" style="margin-top:8px"><div><span class="when">19 Oct 11:40</span><span>Updated by Analyst under '+c.clauses.split(' · ')[0]+'</span></div><div><span class="when">12 Oct 09:02</span><span>Created by A. Moore</span></div></div></div></div>'+
+   '<div class="dr-f btns">'+(c.readOnly?'<span class="note">Evidence cannot be edited.</span>':'<button class="btn primary" data-edit="'+id+'" data-i="'+i+'">Edit</button><button class="btn" data-close>Close</button>')+'</div>');
+}
+function formDrawer(id,i){
+  var c=C[id]||{title:id==='changes'?'Change':'Risk',cols:id==='changes'?['Change','Level','Why']:['Risk','Owner','Residual']};
+  var r=(i!=null&&C[id])?C[id].rows[i]:null;
+  openDrawer('<div class="dr-h"><div><span class="label">'+c.title+'</span><h2 style="margin-top:4px">'+(r?'Edit record':'New record')+'</h2></div><button class="x" data-close aria-label="Close">✕</button></div>'+
+   '<form class="dr-b form" id="recForm">'+c.cols.map(function(h,j){return '<label for="f'+j+'">'+h+'<input id="f'+j+'" value="'+(r?esc(r[j]):'')+'"></label>'}).join('')+
+   '<p class="note">Saving writes an entry to the evidence log with the clause versions in force.</p></form>'+
+   '<div class="dr-f btns"><button class="btn primary" id="saveRec" data-id="'+id+'"'+(r?' data-i="'+i+'"':'')+'>Save</button><button class="btn" data-close>Cancel</button></div>');
+}
+function feedbackDrawer(){
+  var c=C[S.page]||{job:'—',jobName:'',level:'—',flag:'—',clauses:'—'};
+  openDrawer('<div class="dr-h"><div><span class="label">Improve this page</span><h2 style="margin-top:4px">'+esc((CRUMB[S.page]||['Home']).slice(-1)[0])+'</h2></div><button class="x" data-close aria-label="Close">✕</button></div>'+
+   '<form class="dr-b form" id="fbForm"><fieldset class="fb-types"><legend class="label" style="margin-bottom:6px">What kind of feedback?</legend>'+
+   ['Something broke','Confusing','Missing','Feels risky','Idea'].map(function(t,i){return '<label><input type="radio" name="t" id="t'+i+'" value="'+i+'"'+(i===3?' checked':'')+'> '+t+'</label>'}).join('')+'</fieldset>'+
+   '<label for="fbText">What happened?<textarea id="fbText">The refresh date says 12 months, but I thought high-risk clients are every 6 months now.</textarea></label>'+
+   '<dl class="ctx" aria-label="Attached automatically"><dt>Page</dt><dd>/'+S.page+'</dd><dt>Job · level · flag</dt><dd>'+c.job+' · '+c.level+' · '+c.flag+'</dd><dt>Clauses</dt><dd>'+c.clauses+'</dd><dt>Role · entity</dt><dd>'+S.role+' · Harbour Advisory Ltd</dd><dt>Build · Plumbline</dt><dd>4f2a91c · v0.4.0</dd></dl>'+
+   '<p class="note">You get an id now and hear back when it changes something. Tonight\'s run sees this without your name.</p></form>'+
+   '<div class="dr-f btns"><button class="btn primary" id="sendFb">Send feedback</button><button class="btn" data-close>Cancel</button></div>');
+}
+function toast(t){var el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},3200)}
+
+/* side open/close (mobile) */
+function closeSide(){$('#side').classList.remove('open');$('#shade').hidden=true;$('#burger').setAttribute('aria-expanded','false')}
+$('#burger').addEventListener('click',function(){var o=!$('#side').classList.contains('open');$('#side').classList.toggle('open',o);$('#shade').hidden=!o;this.setAttribute('aria-expanded',String(o))});
+$('#shade').addEventListener('click',closeSide);
+
+/* events */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-page],[data-toggle],[data-row],[data-new],[data-edit],[data-close],[data-act],[data-go],#saveRec,#sendFb,#fab,#actionsChip');
+  if(!t) return;
+  if(t.dataset.page){e.preventDefault();go(t.dataset.page)}
+  else if(t.dataset.toggle){e.preventDefault();S.open[t.dataset.toggle]=!S.open[t.dataset.toggle];renderSide();save()}
+  else if(t.dataset.row!=null){var tb=t.closest('tbody');recordDrawer(tb.dataset.tbody,+t.dataset.row)}
+  else if(t.dataset.new){formDrawer(t.dataset.new,null)}
+  else if(t.dataset.edit){formDrawer(t.dataset.edit,+t.dataset.i)}
+  else if(t.hasAttribute('data-close')){closeDrawer()}
+  else if(t.dataset.act){var box=t.closest('.btns'),it=t.closest('.item,tr');box.innerHTML='<span class="done-note">'+t.dataset.act+' · logged</span>';if(it)it.classList.add('flash')}
+  else if(t.dataset.go){go(t.dataset.go)}
+  else if(t.id==='saveRec'){e.preventDefault();var id=t.dataset.id,c=C[id];
+    if(c){var vals=c.cols.map(function(_,j){var el=$('#f'+j);return el?el.value||'—':'—'});if(t.dataset.i!=null)c.rows[+t.dataset.i]=vals;else c.rows.unshift(vals)}
+    closeDrawer();render();toast('Saved · logged to the evidence log')}
+  else if(t.id==='sendFb'){e.preventDefault();var ty=($('#fbForm input[name="t"]:checked')||{}).value;var route=['App fix','App fix','App fix','Policy or risk','Idea'][+ty||0];
+    if(+ty===3&&/policy|months|rule/i.test($('#fbText').value))route='Procedure';
+    closeDrawer();toast('Received as FB-0'+(152+Math.floor(Math.random()*20))+' · tonight it goes to: '+route)}
+  else if(t.id==='fab'){feedbackDrawer()}
+  else if(t.id==='actionsChip'){go('home')}
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeDrawer();closeSide()}
+  if(e.key==='Enter'&&e.target.matches('tr[data-row]')){recordDrawer(e.target.closest('tbody').dataset.tbody,+e.target.dataset.row)}
+});
+document.addEventListener('input',function(e){
+  if(e.target.matches('[data-filter]')){var q=e.target.value.toLowerCase();document.querySelectorAll('tbody[data-tbody] tr').forEach(function(tr){tr.hidden=q&&tr.textContent.toLowerCase().indexOf(q)<0})}
+});
+$('#role').addEventListener('change',function(){S.role=this.value;S.page='home';render()});
+render();
+})();
+</script>

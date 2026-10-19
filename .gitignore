@@ -1,0 +1,7 @@
+.DS_Store
+# Operator files belong in your private OPS folder, never here
+apps.yaml
+reports/
+bma-log.md
+worktrees/
+.env*

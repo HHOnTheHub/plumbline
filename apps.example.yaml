@@ -1,0 +1,31 @@
+# The shape of the private apps list an operator keeps in their OPS folder (never in this repository).
+# Copy to OPS/apps.yaml and fill in. Everything below is fictional.
+#
+# mode: off (never touched) | report (read and report only) | do (Do changes on branches, Ask for the rest; see AUTONOMY.md)
+# push: ask (every push needs a yes) | allowed (the run may push its branches and open pull requests; still never merges)
+# feedback_export / feedback_key: the app's de-identified feedback endpoint (FBK-6) and the keychain item holding its read-only key.
+
+plumbline_version: 0.6.0
+workspace: /path/to/your/workspace      # app paths below are relative to this
+review_modes_on: 2026-11-01             # the run asks which apps to move from report to do on or after this date
+
+apps:
+  - id: advisory
+    name: Harbour Advisory app
+    path: harbour-advisory/app
+    repo: your-org/harbour-advisory-app
+    default_branch: main
+    entity: Harbour Advisory Ltd
+    regulated: true
+    board: [Director A, Director B, Director C]
+    crco: CRCO name
+    pins: v0.6.0
+    checks: npm run check
+    mode: report
+    push: ask
+
+  - id: legacy
+    name: Old app being replaced
+    path: harbour-advisory/old-app
+    entity: Harbour Advisory Ltd
+    mode: off            # stays untouched until the new app reaches parity
