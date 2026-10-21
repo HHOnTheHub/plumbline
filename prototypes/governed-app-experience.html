@@ -203,7 +203,7 @@ textarea{min-height:84px;resize:vertical}
   <header class="top">
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
     <span class="ent"><span class="logo">HA</span><span class="nm">Harbour Advisory Ltd ▾</span></span>
-    <span class="env">Production</span>
+    <span class="env" id="env">Production</span>
     <input class="search" id="q" placeholder="Search records, jobs, clauses…" aria-label="Search">
     <span class="spacer"></span>
     <span class="sample">Sample data</span>
@@ -213,6 +213,7 @@ textarea{min-height:84px;resize:vertical}
       <option value="operator">Operator</option>
       <option value="director">Director</option>
       <option value="crco">CRCO</option>
+      <option value="regulator">Regulator (preview)</option>
     </select>
   </header>
   <div class="body">
@@ -240,7 +241,8 @@ var NAV=[
     {id:'jobs',label:'Jobs register',c:'63'},
     {id:'changes',label:'Changes & approvals',c:'3',hot:true},
     {id:'improvements',label:'Improvements',c:'9',hot:true},
-    {id:'evidence',label:'Evidence log'}
+    {id:'evidence',label:'Evidence log'},
+    {id:'regulator',label:'Regulator view',c:'preview'}
   ]},
   {band:'The machine', hint:'phases, in order', items:[
     {id:'leadgen',label:'Lead generation',n:'1',kids:[{id:'contacts',label:'Contacts'},{id:'events',label:'Events'},{id:'campaigns',label:'Campaigns'}]},
@@ -323,7 +325,7 @@ function parentOf(id){var p=null;NAV.forEach(function(b){b.items.forEach(functio
 function renderSide(){
   var po=parentOf(S.page); if(po)S.open[po]=true;
   var html='';
-  NAV.forEach(function(b){
+  (S.role==='regulator'?REG_NAV:NAV).forEach(function(b){
     html+='<div class="band">'+(b.band?'<div class="band-h"><span class="label">'+b.band+'</span><span class="hint">'+b.hint+'</span></div>':'')+'<nav class="nav">';
     b.items.forEach(function(it){
       if(it.kids){
@@ -476,10 +478,77 @@ function pPlumbline(){return '<div class="page">'+crumb('plumbline')+'<div class
   '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Group</th><th class="r">Met</th><th class="r">Partial</th><th class="r">Gap</th><th>Next up</th></tr></thead><tbody>'+
   '<tr><td>GOV Governance</td><td class="r tnum">6</td><td class="r tnum">2</td><td class="r tnum">2</td><td>GOV-9 approvals in the app</td></tr><tr><td>IAM Access</td><td class="r tnum">4</td><td class="r tnum">1</td><td class="r tnum">1</td><td>IAM-3 self-grant trigger (ask open)</td></tr><tr><td>DAT Data</td><td class="r tnum">6</td><td class="r tnum">0</td><td class="r tnum">0</td><td>—</td></tr><tr><td>UIX App shell</td><td class="r tnum">3</td><td class="r tnum">3</td><td class="r tnum">3</td><td>UIX-3 left menu bands</td></tr><tr><td>FBK Feedback</td><td class="r tnum">0</td><td class="r tnum">1</td><td class="r tnum">5</td><td>FBK-6 de-identified export</td></tr></tbody></table></div></div>'+foot()+'</div>'}
 
-var PAGES={home:pHome,'gov-overview':pOverview,board:pBoard,changes:pChanges,improvements:pImprovements,'risk-register':pRiskRegister,plumbline:pPlumbline};
+/* ---------- regulator view (preview) ---------- */
+function regBanner(){return '<div class="gstrip" style="border-color:var(--warn);background:var(--warn-soft);color:var(--warn)"><b>Preview.</b>&nbsp;No regulator has access. This is what a supervisor would see if the view were switched on under a pilot, with written terms approved by the board and counsel.</div>'}
+function regPage(id,title,sub,body){return '<div class="page">'+crumb(id)+'<div class="ph"><div class="t"><h1>'+title+'</h1><span class="note">'+sub+'</span></div><div class="btns"><button class="btn" data-go="reg-requests">Request detail</button></div></div>'+regBanner()+body+regFoot()+'</div>'}
+function regFoot(){return '<div class="vfoot"><span>Supervisory view v0.1 (preview)</span><span>Data as of 21 Oct 2026 22:11</span><span>Evidence checkpoint #412</span><span>Every view is logged and shown to the board and CRCO</span></div>'}
+function pRegHome(){return regPage('reg-home','Harbour Advisory Ltd','Licensed corporate service provider · supervisory view',
+  tiles([['Risks within appetite','6 / 8','Outsourcing, data protection above'],['KRI breaches open','2','Both notified within 24 h'],['Controls tested on time','18 / 20','C-09, C-17 due this month'],['Evidence chain','Verified','Checkpoint #412, 21 Oct 22:11']])+
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Since your last visit</h2><span class="note">14 Oct to 21 Oct</span></div><div class="list">'+
+  item('acc','Board approved AML policy v2.0','High-risk refresh moves from 12 to 6 months. Two procedures and one control re-signed.','<span class="chip ok">Evidence</span>')+
+  item('warn','Material AI change proposed: J30 monitoring to agent level','Shadow run 8 weeks, 97% agreement with the MLRO on 312 alerts. Not live; awaiting MLRO sign-off.','<span class="chip warn">Pending</span>')+
+  item('bad','Incident: possible information-barrier exposure','Raised from staff feedback on 19 Oct; contained the same day; root cause under review.','<span class="chip bad">Open</span>')+
+  item('ok','Vendor added: model provider fallback','Outsourcing register entry with data location and exit plan; board approval recorded.','<span class="chip ok">Evidence</span>')+'</div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>Notifications sent to you</h2><span class="note">Under the notification policy</span></div><div class="tbl-wrap"><table><thead><tr><th>Event</th><th>When</th><th>Rule</th></tr></thead><tbody>'+
+  '<tr><td>KRI breach: overdue client refreshes</td><td>17 Oct</td><td class="mono">NOT-2.1</td></tr><tr><td>KRI breach: vendor without exit plan</td><td>18 Oct</td><td class="mono">NOT-2.1</td></tr><tr><td>Incident logged</td><td>19 Oct</td><td class="mono">NOT-3.1</td></tr></tbody></table></div></div></div>')}
+function pRegRisk(){var c=C.kris;return regPage('reg-risk','Risk and key risk indicators','Ratings against the board\'s appetite; limits are policy parameters',
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Position against appetite</h2></div>'+appetite()+'</div><div class="panel"><div class="panel-head"><h2>Indicators</h2></div><div class="tbl-wrap"><table><thead><tr>'+c.cols.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+c.rows.map(function(r){return '<tr>'+r.map(function(v,j){return '<td>'+(j===0?esc(v):stateChip(v))+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></div></div>')}
+function pRegGov(){var c=C.policies;return regPage('reg-gov','Governance and changes','Effective policies with versions; every change in the last 90 days',
+  '<div class="panel"><div class="panel-head"><h2>Policies in force</h2></div><div class="tbl-wrap"><table><thead><tr>'+c.cols.map(function(h){return '<th>'+h+'</th>'}).join('')+'</tr></thead><tbody>'+c.rows.map(function(r){return '<tr>'+r.map(function(v,j){return '<td>'+(j===0?'<b>'+esc(v)+'</b>':stateChip(v))+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>Changes, last 90 days</h2></div><div class="tbl-wrap"><table><thead><tr><th>Change</th><th>Level</th><th>Approved by</th><th>Date</th><th>Diagnosis</th></tr></thead><tbody>'+
+  '<tr><td>AML policy v2.0</td><td>3 Policy</td><td>Board (minuted)</td><td>20 Oct</td><td>2 procedures, 1 control re-signed</td></tr><tr><td>Procedure J23-P1 v1.4</td><td>4 Procedure</td><td>MLRO; CRCO co-signed</td><td>21 Oct</td><td>Clean</td></tr><tr><td>Outsourcing policy v1.2</td><td>3 Policy</td><td>Board (minuted)</td><td>2 Oct</td><td>Clean</td></tr><tr><td>Residual risk R-03 to Moderate</td><td>2 Framework</td><td>CRCO; board noted</td><td>9 Oct</td><td>Three controls automated, 90 clean days</td></tr></tbody></table></div></div>')}
+function pRegAI(){return regPage('reg-ai','AI use cases','The firm\'s AI inventory, generated from its agent and outsourcing registers',
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>Use case</th><th>Job</th><th>Materiality</th><th>Where it runs</th><th>Human oversight</th><th>Level</th><th>Last material change</th></tr></thead><tbody>'+
+  '<tr><td><b>Monitoring alert triage</b></td><td>J30</td><td>'+stateChip('High')+'</td><td>In-app agent via model gateway</td><td>MLRO decides every alert</td><td><span class="chip warn">Shadow</span></td><td>Proposed 14 Oct</td></tr>'+
+  '<tr><td><b>Name matching in screening</b></td><td>J23</td><td>'+stateChip('Medium')+'</td><td>Inside the screening provider\'s tool</td><td>Possible matches go to the MLRO</td><td><span class="chip ok">Live</span></td><td>Vendor update 1 Sep</td></tr>'+
+  '<tr><td><b>Pipeline summaries</b></td><td>J05</td><td>'+stateChip('Low')+'</td><td>In-app, via model gateway</td><td>Director reads before use</td><td><span class="chip ok">Live</span></td><td>—</td></tr>'+
+  '<tr><td><b>Staff drafting assistant</b></td><td>—</td><td>'+stateChip('Low')+'</td><td>Workbench tool, approved list</td><td>Productivity tool; no client data</td><td><span class="chip">Workbench</span></td><td>—</td></tr></tbody></table></div><p class="note" style="margin-top:10px">Every model call records provider, model, version and prompt version in the evidence log. Limits are enforced in code, not prompts.</p></div>')}
+function pRegOut(){var c=C.vendors;return regPage('reg-outsourcing','Outsourcing','Every vendor, with data location, exit plan and materiality',
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr>'+c.cols.map(function(h){return '<th>'+h+'</th>'}).join('')+'<th>Notified</th></tr></thead><tbody>'+c.rows.map(function(r){return '<tr>'+r.map(function(v,j){return '<td>'+(j===0?'<b>'+esc(v)+'</b>':esc(v))+'</td>'}).join('')+'<td>'+(r[4]==='Yes'?'<span class="chip ok">Yes</span>':'<span class="chip">Not required</span>')+'</td></tr>'}).join('')+'</tbody></table></div></div>')}
+function pRegInc(){var c=C.incidents;return regPage('reg-incidents','Incidents and notifications','What happened, when it was notified, and its status',
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr>'+c.cols.map(function(h){return '<th>'+h+'</th>'}).join('')+'<th>Notified</th></tr></thead><tbody>'+c.rows.map(function(r,i){return '<tr>'+r.map(function(v,j){return '<td>'+(j===0?esc(v):stateChip(v))+'</td>'}).join('')+'<td>'+(i===0?'19 Oct, same day':'Not required')+'</td></tr>'}).join('')+'</tbody></table></div></div>')}
+function pRegIntegrity(){return regPage('reg-integrity','Evidence integrity','The evidence log is append-only and hash-chained; you can check it has not been altered',
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Daily checkpoints</h2><button class="btn primary" id="verifyChain">Verify the chain</button></div><div class="tbl-wrap"><table><thead><tr><th>Checkpoint</th><th>Sealed</th><th class="r">Entries</th><th>Root hash</th><th>Status</th></tr></thead><tbody id="cpRows">'+
+  '<tr><td>#412</td><td>21 Oct 22:11</td><td class="r tnum">1,284</td><td class="mono">a91f…7c02</td><td>'+stateChip('Within').replace('Within','Sealed')+'</td></tr><tr><td>#411</td><td>20 Oct 22:11</td><td class="r tnum">1,197</td><td class="mono">3be0…91d4</td><td><span class="chip ok">Sealed</span></td></tr><tr><td>#410</td><td>19 Oct 22:11</td><td class="r tnum">1,233</td><td class="mono">f02c…5a18</td><td><span class="chip ok">Sealed</span></td></tr></tbody></table></div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>How it works</h2></div><div class="list">'+
+  item('acc','Each entry carries the hash of the one before','Changing or deleting any entry breaks every hash after it.','<span></span>')+
+  item('acc','A checkpoint is sealed every night','Its root hash is sent to you, so you hold a copy the firm cannot change.','<span></span>')+
+  item('acc','You verify, not trust','Recompute any day\'s chain from the entries and compare it with the root you hold.','<span></span>')+'</div></div></div>')}
+function pRegRequests(){return regPage('reg-requests','Requests','Ask for detail beyond this view; the CRCO answers, and both sides are logged',
+  '<div class="grid g2"><form class="panel form" id="regForm"><div class="panel-head"><h2>New request</h2></div>'+
+  '<label for="rq1">What you need<input id="rq1" value="Screening file for the possible match on client K-0087"></label>'+
+  '<label for="rq2">Purpose<input id="rq2" value="Thematic review of sanctions screening"></label>'+
+  '<label for="rq3">By<input id="rq3" value="4 Nov 2026"></label>'+
+  '<p class="note">By default this view shows aggregates and metadata. Client-level records are shared only on request, through the CRCO, under the firm\'s confidentiality and data protection policies.</p>'+
+  '<div class="btns"><button class="btn primary" id="sendReq">Send request</button></div></form>'+
+  '<div class="panel"><div class="panel-head"><h2>Previous requests</h2></div><div class="list">'+
+  item('ok','Outsourcing register with contracts','Requested 2 Oct · provided 4 Oct through a secure share','<span class="chip ok">Answered</span>')+
+  item('warn','Board minutes approving AML v2.0','Requested 20 Oct · due 27 Oct','<span class="chip warn">Open</span>')+'</div></div></div>')}
+function pRegAccess(){return regPage('reg-access','Access log','Every visit to this view, visible to the firm\'s board and CRCO as well',
+  '<div class="panel"><div class="tbl-wrap"><table><thead><tr><th>When</th><th>Who</th><th>Viewed</th></tr></thead><tbody>'+
+  '<tr><td>21 Oct 09:14</td><td>Supervisor 1</td><td>Overview; Risk and key risk indicators</td></tr><tr><td>20 Oct 16:40</td><td>Supervisor 2</td><td>AI use cases</td></tr><tr><td>20 Oct 16:32</td><td>Supervisor 2</td><td>Evidence integrity (verified #411)</td></tr></tbody></table></div></div>')}
+function pRegulatorStaff(){return '<div class="page">'+crumb('regulator')+'<div class="ph"><div class="t"><h1>Regulator view</h1><span class="note">Built and tried internally first. Nobody outside the firm has access.</span></div><div class="btns"><button class="btn primary" id="previewReg">Preview as the regulator</button></div></div>'+
+  '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>What the regulator would see</h2></div><div class="list">'+
+  item('acc','The same records we run on, read-only','Position against appetite, KRIs, policies and changes, AI use cases, outsourcing, incidents. No separate report to compile.','<span></span>')+
+  item('acc','Aggregates by default, detail on request','Client-level records only through a logged request the CRCO answers.','<span></span>')+
+  item('acc','Proof the record is intact','A hash-chained evidence log with nightly checkpoints the regulator holds.','<span></span>')+
+  item('acc','Their visits are visible to us','Every view is logged and shown to the board and CRCO.','<span></span>')+'</div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>Readiness</h2><span class="note">Proposed clauses SUP-1 to SUP-7</span></div><div class="tbl-wrap"><table><thead><tr><th>Clause</th><th>Status</th></tr></thead><tbody>'+
+  '<tr><td>SUP-1 Read-only regulator role and routes</td><td>'+stateChip('Draft')+'</td></tr><tr><td>SUP-2 Hash-chained evidence log, nightly checkpoints</td><td><span class="chip warn">Partial</span></td></tr><tr><td>SUP-3 Machine-readable export</td><td><span class="chip">Gap</span></td></tr><tr><td>SUP-4 Aggregates by default; detail by request</td><td><span class="chip warn">Partial</span></td></tr><tr><td>SUP-5 Notification feed</td><td><span class="chip">Gap</span></td></tr><tr><td>SUP-6 Internal preview before any access</td><td><span class="chip ok">Met</span></td></tr><tr><td>SUP-7 Pilot only under written terms</td><td><span class="chip">Not started</span></td></tr></tbody></table></div></div></div>'+
+  '<div class="panel"><div class="panel-head"><h2>Path to a pilot</h2></div><div class="tbl-wrap"><table><thead><tr><th>Stage</th><th>What happens</th><th>Gate</th></tr></thead><tbody>'+
+  '<tr><td><b>1 Internal preview</b></td><td>Board and CRCO use this view on real data, as the regulator would</td><td>The board is comfortable with what it shows</td></tr><tr><td><b>2 Counsel and board</b></td><td>Confidentiality, data protection and outsourcing reviewed; scope and notification rules written</td><td>Board resolution</td></tr><tr><td><b>3 Demonstration</b></td><td>The regulator sees the view on fictional data</td><td>The regulator wants to go further</td></tr><tr><td><b>4 Pilot</b></td><td>Read-only access through the regulator\'s innovation or sandbox route, limited scope and period</td><td>Written pilot terms</td></tr><tr><td><b>5 Standing access</b></td><td>The view becomes part of how the firm is supervised</td><td>Agreed with the regulator; reviewed yearly</td></tr></tbody></table></div></div>'+foot()+'</div>'}
+var REG_NAV=[{band:'Supervisory view',hint:'read-only',items:[{id:'reg-home',label:'Overview'},{id:'reg-risk',label:'Risk and KRIs'},{id:'reg-gov',label:'Governance and changes'},{id:'reg-ai',label:'AI use cases'},{id:'reg-outsourcing',label:'Outsourcing'},{id:'reg-incidents',label:'Incidents',c:'1',hot:true},{id:'reg-integrity',label:'Evidence integrity'},{id:'reg-requests',label:'Requests',c:'1'},{id:'reg-access',label:'Access log'}]}];
+REG_NAV[0].items.forEach(function(it){CRUMB[it.id]=['Supervisory view (preview)',it.label]});
+
+var PAGES={home:pHome,regulator:pRegulatorStaff,'reg-home':pRegHome,'reg-risk':pRegRisk,'reg-gov':pRegGov,'reg-ai':pRegAI,'reg-outsourcing':pRegOut,'reg-incidents':pRegInc,'reg-integrity':pRegIntegrity,'reg-requests':pRegRequests,'reg-access':pRegAccess,'gov-overview':pOverview,board:pBoard,changes:pChanges,improvements:pImprovements,'risk-register':pRiskRegister,plumbline:pPlumbline};
 
 /* ---------- render ---------- */
 function render(){
+  var isReg=S.role==='regulator';
+  if(isReg&&S.page.indexOf('reg-')!==0)S.page='reg-home';
+  if(!isReg&&S.page.indexOf('reg-')===0)S.page='home';
+  $('#env').textContent=isReg?'Supervisory view · preview':'Production';
+  $('#fab').hidden=isReg;$('#actionsChip').hidden=isReg;
   renderSide();
   var id=S.page, html;
   if(PAGES[id]) html=PAGES[id]();
@@ -554,7 +623,12 @@ document.addEventListener('keydown',function(e){
 document.addEventListener('input',function(e){
   if(e.target.matches('[data-filter]')){var q=e.target.value.toLowerCase();document.querySelectorAll('tbody[data-tbody] tr').forEach(function(tr){tr.hidden=q&&tr.textContent.toLowerCase().indexOf(q)<0})}
 });
-$('#role').addEventListener('change',function(){S.role=this.value;S.page='home';render()});
+$('#role').addEventListener('change',function(){S.role=this.value;S.page=S.role==='regulator'?'reg-home':'home';render()});
+document.addEventListener('click',function(e){
+  if(e.target.id==='previewReg'){S.role='regulator';S.page='reg-home';render()}
+  else if(e.target.id==='sendReq'){e.preventDefault();toast('Request sent to the CRCO · logged on both sides')}
+  else if(e.target.id==='verifyChain'){e.target.disabled=true;e.target.textContent='Verified';toast('Chain recomputed for checkpoints #410 to #412 · all roots match')}
+});
 render();
 })();
 </script>
