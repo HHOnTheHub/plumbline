@@ -1,6 +1,6 @@
-# Example: Harbour Advisory Ltd (fictional)
+# Example: Example Advisory Ltd (fictional)
 
-Harbour Advisory is an invented Bermuda firm used to show Plumbline applied. It places independent directors on client boards, runs governance reviews and holds a corporate service provider licence. Three directors, a CRCO, an MLRO and an operator run it. Nothing here describes a real company or person.
+Example Advisory is an invented firm used to show Plumbline applied. It places independent directors on client boards, runs governance reviews and holds a corporate service provider licence. Three directors, a CRCO, an MLRO and an operator run it. Nothing here describes a real company or person.
 
 The [prototype](../../prototypes/governed-app-experience.html) shows its app.
 
