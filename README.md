@@ -27,6 +27,8 @@ Each organisation's board and risk owner set the rules. Every app traces what it
 | [plugins/plumbline/](plugins/plumbline/) | A Claude Code plugin with the Plumbline skills |
 | [decisions/](decisions/) | Why the standard is the way it is |
 | [proposals/](proposals/) | Changes considered, accepted or declined |
+| [kit/](kit/README.md) | Shared code that implements the clauses (own version track, `kit-vX.Y.Z`). Empty for now |
+| [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md) | What may never enter this public repository, and the checks that enforce it |
 
 ## Using it
 
@@ -58,7 +60,7 @@ Plumbline follows its own rules: clause ids are permanent and never reused, ever
 
 ## Contributing
 
-Suggestions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Keep anything that identifies your organisation, its people or its systems' weaknesses out of issues and pull requests.
+Suggestions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) and [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md). Keep anything that identifies your organisation, its people or its systems' weaknesses out of issues and pull requests.
 
 ## Licence
 
