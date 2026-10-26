@@ -202,7 +202,7 @@ textarea{min-height:84px;resize:vertical}
 <div class="app">
   <header class="top">
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
-    <span class="ent"><span class="logo">HA</span><span class="nm">Harbour Advisory Ltd ▾</span></span>
+    <span class="ent"><span class="logo">EA</span><span class="nm">Example Advisory Ltd ▾</span></span>
     <span class="env" id="env">Production</span>
     <input class="search" id="q" placeholder="Search records, jobs, clauses…" aria-label="Search">
     <span class="spacer"></span>
@@ -263,23 +263,23 @@ NAV.forEach(function(b){b.items.forEach(function(it){CRUMB[it.id]=[b.band||'Home
 /* ---------- generic CRUD pages ---------- */
 var C={
  contacts:{title:'Contacts',job:'J02',jobName:'Grow the network',level:'Assist',flag:'live',clauses:'DPR-2.1 v1.0 · BAR-1.2 v1.1',control:['C-31 Consent recorded','ok'],risk:['R-07 Data protection','warn'],
-   cols:['Name','Organisation','Tier','Owner','Last touch'],rows:[['M. Darrell','Harbour Re','1','A. Moore','14 Oct'],['S. Okafor','Coral Analytics','1','J. Tucker','11 Oct'],['P. Varga','Northline Trust','2','R. Simmons','2 Oct'],['J. Pereira','Bluewater Capital','1','A. Moore','29 Sep']]},
+   cols:['Name','Organisation','Tier','Owner','Last touch'],rows:[['Contact A','Alpha Re','1','Director A','14 Oct'],['Contact B','Bravo Analytics','1','Director B','11 Oct'],['Contact C','Charlie Trust','2','Director C','2 Oct'],['Contact D','Delta Capital','1','Director A','29 Sep']]},
  events:{title:'Events',job:'J03',jobName:'Run events',level:'Record',flag:'live',clauses:'MKT-1.1 v1.0',control:['C-33 Speaker due diligence','ok'],risk:['R-08 Reputation','ok'],
    cols:['Event','Date','Registrations','Status'],rows:[['Board effectiveness breakfast','6 Nov','42','Open'],['AI governance roundtable','20 Nov','18','Open'],['Founders demo day','4 Dec','7','Draft']]},
  campaigns:{title:'Campaigns',job:'J04',jobName:'Publish the newsletter',level:'Record',flag:'live',clauses:'MKT-2.3 v1.0 · DPR-3.1 v1.0',control:['C-34 Unsubscribe honoured','ok'],risk:['R-07 Data protection','warn'],
    cols:['Campaign','Audience','Sent','Opens'],rows:[['October letter','Tier 1 network','8 Oct','61%'],['Event invite: breakfast','Directors list','15 Oct','48%']]},
  pipeline:{title:'Pipeline',job:'J05',jobName:'Qualify an opportunity',level:'Assist',flag:'live',clauses:'COI-4.1 v1.2 · BAR-1.2 v1.1',control:['C-12 Conflict check before proposal','ok'],risk:['R-04 Conflicts','ok'],
-   cols:['Opportunity','Client','Stage','Owner','Next step'],rows:[['Board seat search','Harbour Re','Qualified','A. Moore','Call 22 Oct'],['Governance review','Coral Analytics','Discovery','J. Tucker','Send scope'],['Interim CFO','Northline Trust','Proposal','R. Simmons','Review terms']]},
+   cols:['Opportunity','Client','Stage','Owner','Next step'],rows:[['Board seat search','Alpha Re','Qualified','Director A','Call 22 Oct'],['Governance review','Bravo Analytics','Discovery','Director B','Send scope'],['Interim CFO','Charlie Trust','Proposal','Director C','Review terms']]},
  proposals:{title:'Proposals',job:'J13',jobName:'Propose an engagement',level:'Record',flag:'live',clauses:'BP-7.1 v1.0 · COI-4.2 v1.2',control:['C-13 Four-eyes on fees','ok'],risk:['R-04 Conflicts','ok'],
-   cols:['Proposal','Client','Value','Status'],rows:[['Interim CFO, 6 months','Northline Trust','$84,000','Awaiting approval'],['Board evaluation','Bluewater Capital','$22,000','Sent']]},
+   cols:['Proposal','Client','Value','Status'],rows:[['Interim CFO, 6 months','Charlie Trust','$84,000','Awaiting approval'],['Board evaluation','Delta Capital','$22,000','Sent']]},
  onboarding:{title:'Onboarding',job:'J29',jobName:'Know the client',level:'Assist',flag:'live',clauses:'AML-3.2 v1.3 · AML-4.2 v1.3',control:['C-14 File complete before approval','ok'],risk:['R-03 Financial crime','warn'],
-   cols:['Client','Type','Risk rating','File','Decision'],rows:[['Northline Trust','Trust','High','6 of 7 items','Waiting for MLRO'],['Coral Analytics','Company','Low','Complete','Approved 9 Oct'],['Bluewater Capital','Fund','Medium','4 of 7 items','Collecting']]},
+   cols:['Client','Type','Risk rating','File','Decision'],rows:[['Charlie Trust','Trust','High','6 of 7 items','Waiting for MLRO'],['Bravo Analytics','Company','Low','Complete','Approved 9 Oct'],['Delta Capital','Fund','Medium','4 of 7 items','Collecting']]},
  engagements:{title:'Engagements',job:'J14',jobName:'Approve and run an engagement',level:'Record',flag:'live',clauses:'BP-7.2 v1.0 · OUT-2.1 v1.1',control:['C-15 Engagement letter signed','ok'],risk:['R-05 Operational','ok'],
-   cols:['Engagement','Client','Lead','Start','Status'],rows:[['Board advisory','Coral Analytics','J. Tucker','1 Sep','Active'],['Governance review','Harbour Re','A. Moore','15 Oct','Starting']]},
+   cols:['Engagement','Client','Lead','Start','Status'],rows:[['Board advisory','Bravo Analytics','Director B','1 Sep','Active'],['Governance review','Alpha Re','Director A','15 Oct','Starting']]},
  placements:{title:'Placements',job:'J01',jobName:'Fill a seat',level:'Record',flag:'live',clauses:'BP-3.3 v1.0 · FIT-1.4 v1.0',control:['C-16 Fit and proper on file','ok'],risk:['R-06 People','ok'],
-   cols:['Seat','Client','Candidate','Stage'],rows:[['Independent director','Harbour Re','Shortlist of 4','Interviews'],['Audit chair','Coral Analytics','Placed','Live since 1 Sep']]},
+   cols:['Seat','Client','Candidate','Stage'],rows:[['Independent director','Alpha Re','Shortlist of 4','Interviews'],['Audit chair','Bravo Analytics','Placed','Live since 1 Sep']]},
  service:{title:'Client service',job:'J18',jobName:'Keep the client served',level:'Record',flag:'off',clauses:'BP-7.4 v1.0',control:['C-18 Quarterly client review','warn'],risk:['R-05 Operational','ok'],
-   cols:['Client','Last review','Satisfaction','Owner'],rows:[['Coral Analytics','30 Sep','9 / 10','J. Tucker']]},
+   cols:['Client','Last review','Satisfaction','Owner'],rows:[['Bravo Analytics','30 Sep','9 / 10','Director B']]},
  kris:{title:'Key risk indicators',job:'J27',jobName:'Monitor risk',level:'Assist',flag:'live',clauses:'RA-2.1 v1.0 · ERM-6.2 v1.0',control:['C-25 KRI breach escalated','ok'],risk:['All categories','acc'],
    cols:['Indicator','Now','Limit','State'],rows:[['Screening backlog (J23)','1.4 days','3 days','Within'],['Overdue client refreshes','2','0','Breach'],['Vendors without exit plan','1','0','Breach'],['Policies past review','0','0','Within']]},
  incidents:{title:'Incidents',job:'J26',jobName:'Handle an incident or breach',level:'Record',flag:'live',clauses:'BCP-3.1 v1.0 · DPR-5.1 v1.0',control:['C-26 Logged within 24 hours','ok'],risk:['R-05 Operational','ok'],
@@ -291,15 +291,15 @@ var C={
  controls:{title:'Controls',job:'J24',jobName:'Test controls',level:'Record',flag:'live',clauses:'CMP-3.2 v1.0',control:['C-09, C-17 due','warn'],risk:['All categories','acc'],
    cols:['Control','Proves','Owner','Last test','Result'],rows:[['C-14 Screening completeness','AML-4.2','MLRO','Sep 2026','Pass'],['C-09 Access review','DPR-4.1','CRCO','Jun 2026','Due'],['C-17 Fee four-eyes','BP-7.1','CRCO','Jul 2026','Due']]},
  invoices:{title:'Invoices',job:'J38',jobName:'Bill and collect',level:'Record',flag:'live',clauses:'FIN-2.1 v1.0',control:['C-38 Invoice from engagement record','ok'],risk:['R-01 Financial','ok'],
-   cols:['Invoice','Client','Amount','Due','Status'],rows:[['INV-0042','Coral Analytics','$7,500','31 Oct','Sent'],['INV-0041','Harbour Re','$12,000','15 Oct','Overdue']]},
+   cols:['Invoice','Client','Amount','Due','Status'],rows:[['INV-0042','Bravo Analytics','$7,500','31 Oct','Sent'],['INV-0041','Alpha Re','$12,000','15 Oct','Overdue']]},
  budget:{title:'Budget',job:'J39',jobName:'Plan and track the budget',level:'Record',flag:'off',clauses:'FIN-1.1 v1.0',control:['C-39 Monthly variance review','ok'],risk:['R-01 Financial','ok'],
    cols:['Line','Budget YTD','Actual YTD','Variance'],rows:[['Technology','$18,000','$15,400','-14%'],['Events','$9,000','$10,100','+12%']]},
  team:{title:'Team',job:'J40',jobName:'Administer people and access',level:'Record',flag:'live',clauses:'ACC-1.3 v1.0',control:['C-40 No self-granted access','ok'],risk:['R-06 People','ok'],
-   cols:['Person','Role','Access areas','Since'],rows:[['Sam Ward','Operator','admin, ops','Jan 2026'],['R. Simmons','Director','board, approvals','Jan 2026'],['J. Tucker','Director','board, approvals','Jan 2026'],['A. Moore','Director','board, approvals','Jan 2026']]},
+   cols:['Person','Role','Access areas','Since'],rows:[['Operator One','Operator','admin, ops','Jan 2026'],['Director C','Director','board, approvals','Jan 2026'],['Director B','Director','board, approvals','Jan 2026'],['Director A','Director','board, approvals','Jan 2026']]},
  training:{title:'Training',job:'J28',jobName:'Keep people trained',level:'Record',flag:'live',clauses:'AML-8.1 v1.3',control:['C-28 Annual AML training','ok'],risk:['R-03 Financial crime','warn'],
    cols:['Person','Course','Completed','Next due'],rows:[['All staff','AML/ATF annual','Mar 2026','Mar 2027']]},
  conflicts:{title:'Conflicts register',job:'J25',jobName:'Manage conflicts',level:'Record',flag:'live',clauses:'COI-2.1 v1.2',control:['C-12 Conflict check before proposal','ok'],risk:['R-04 Conflicts','ok'],
-   cols:['Declared by','Interest','Mitigation','Reviewed'],rows:[['A. Moore','Shareholding in a client','Recused from engagement','Oct 2026']]},
+   cols:['Declared by','Interest','Mitigation','Reviewed'],rows:[['Director A','Shareholding in a client','Recused from engagement','Oct 2026']]},
  flags:{title:'Flags',job:'J60',jobName:'Govern automation',level:'Record',flag:'live',clauses:'FLG-1.1 v1.0',control:['C-60 Flag changes logged','ok'],risk:['R-09 Technology','ok'],
    cols:['Flag','Job · level','State','Audience','Changed'],rows:[['screening.assist','J23 · Assist','live','MLRO, CRCO','12 Oct'],['monitoring.agent','J30 · Agent','shadow','CRCO','2 Oct'],['service.record','J18 · Record','off','—','—']]},
  agents:{title:'Agents',job:'J61',jobName:'Register and test agents',level:'Record',flag:'live',clauses:'AI-2.1 v1.0',control:['C-61 Envelope in code','ok'],risk:['R-09 Technology','ok'],
@@ -309,9 +309,9 @@ var C={
  policies:{title:'Policies',job:'J11',jobName:'Maintain the governance chain',level:'Record',flag:'live',clauses:'GOV-1.1 v1.0',control:['C-11 Reviewed on schedule','ok'],risk:['R-02 Regulatory','ok'],
    cols:['Id','Policy','Version','Status','Approver','Next review'],rows:[['AML','AML/ATF','1.3','Effective','Board','Mar 2027'],['COI','Conflicts of interest','1.2','Effective','Board','Mar 2027'],['OUT','Outsourcing','1.2','Effective','Board','Oct 2027'],['TEC','Technology (adopts Plumbline)','0.1','Draft','Board','—']]},
  jobs:{title:'Jobs register',job:'J11',jobName:'Maintain the governance chain',level:'Record',flag:'live',clauses:'GOV-4.1 v1.0',control:['C-11 Every feature names a job','ok'],risk:['R-02 Regulatory','ok'],
-   cols:['Id','Job','Menu home','Level','Flag','Owner'],rows:[['J02','Grow the network','Lead generation','Assist','live','A. Moore'],['J05','Qualify an opportunity','Lead activation','Assist','live','J. Tucker'],['J29','Know the client','Lead activation','Assist','live','CRCO'],['J01','Fill a seat','Product delivery','Record','live','R. Simmons'],['J23','Screen clients and consultants','Compliance','Assist','live','MLRO'],['J30','Ongoing monitoring','Compliance','Agent (shadow)','shadow','MLRO']]},
+   cols:['Id','Job','Menu home','Level','Flag','Owner'],rows:[['J02','Grow the network','Lead generation','Assist','live','Director A'],['J05','Qualify an opportunity','Lead activation','Assist','live','Director B'],['J29','Know the client','Lead activation','Assist','live','CRCO'],['J01','Fill a seat','Product delivery','Record','live','Director C'],['J23','Screen clients and consultants','Compliance','Assist','live','MLRO'],['J30','Ongoing monitoring','Compliance','Agent (shadow)','shadow','MLRO']]},
  evidence:{title:'Evidence log',readOnly:true,job:'J11',jobName:'Keep the record',level:'Record',flag:'live',clauses:'EVD-1.1 v1.0',control:['C-50 Append-only enforced','ok'],risk:['R-02 Regulatory','ok'],
-   cols:['When','Who','Job · step','What','Under'],rows:[['19 Oct 22:14','Plumbline run','—','Report written, 3 asks','Plumbline v0.4.0'],['19 Oct 16:02','CRCO','J27','Accepted maturity: R-03 to Moderate','ERM-6.2 v1.0'],['19 Oct 11:40','Analyst','J23 · P1.3','Screening K-0091 prepared','AML-4.2 v1.3'],['18 Oct 09:15','A. Moore','J05','Conflict check passed: Northline Trust','COI-4.1 v1.2']]}
+   cols:['When','Who','Job · step','What','Under'],rows:[['19 Oct 22:14','Plumbline run','—','Report written, 3 asks','Plumbline v0.4.0'],['19 Oct 16:02','CRCO','J27','Accepted maturity: R-03 to Moderate','ERM-6.2 v1.0'],['19 Oct 11:40','Analyst','J23 · P1.3','Screening K-0091 prepared','AML-4.2 v1.3'],['18 Oct 09:15','Director A','J05','Conflict check passed: Charlie Trust','COI-4.1 v1.2']]}
 };
 
 /* ---------- state ---------- */
@@ -393,7 +393,7 @@ function tiles(arr){return '<div class="grid g4">'+arr.map(function(t){return '<
 
 function pHome(){
   var r=S.role, head='<div class="page">'+crumb('home');
-  if(r==='director') return head+'<div class="ph"><div class="t"><h1>Good evening, Director</h1><span class="note">Harbour Advisory Ltd · next board meeting 12 Nov</span></div></div>'+
+  if(r==='director') return head+'<div class="ph"><div class="t"><h1>Good evening, Director</h1><span class="note">Example Advisory Ltd · next board meeting 12 Nov</span></div></div>'+
     tiles([['Decisions for you','3','Due before 12 Nov'],['Risks within appetite','6 / 8','Outsourcing, data protection above'],['Matured this quarter','11','4 for your noting'],['Plumbline conformance','41 / 75','Up from 12 in August']])+
     '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Decisions for the board</h2><span class="chip acc">3 open</span></div>'+decisionsBoard()+'</div>'+
     '<div class="panel"><div class="panel-head"><h2>Position against risk appetite</h2><span class="note">Residual ● against appetite band</span></div>'+appetite()+'</div></div>'+
@@ -407,19 +407,19 @@ function pHome(){
     '<div class="panel"><div class="panel-head"><h2>Risk-tagged feedback</h2><span class="chip bad">1 urgent</span></div><div class="list">'+
     item('bad','"I could see another client\'s name in the search suggestions"','Onboarding (J29). Possible information-barrier breach (DAT-1). Incident opened; the nightly run paused changes on that page.','<button class="btn primary" data-go="incidents">Open incident</button>')+
     item('warn','"Refresh dates don\'t match what the policy says"','Screening (J23), 3 reports. Procedure J23-P1 out of step with AML-4.2 v1.3. Sent to the job owner.','<span class="chip warn">Procedure</span>')+'</div></div></div>'+foot()+'</div>';
-  return head+'<div class="ph"><div class="t"><h1>Good evening, Sam</h1><span class="note">Operator desk · all entities · last Plumbline run 22:11</span></div></div>'+
+  return head+'<div class="ph"><div class="t"><h1>Good evening, Operator</h1><span class="note">Operator desk · all entities · last Plumbline run 22:11</span></div></div>'+
     '<div class="panel"><div class="panel-head"><h2>Portfolio</h2><span class="note">4 apps checked · 3 changes · 4 asks</span></div><div class="tbl-wrap"><table><thead><tr><th>Entity · app</th><th>Mode</th><th class="r">Plumbline met</th><th class="r">P1 gaps</th><th class="r">Exceptions</th><th class="r">New feedback</th><th>Last night</th></tr></thead><tbody>'+
-    '<tr><td>Harbour Advisory · app.harbour.example</td><td>'+stateChip('live').replace('live','do')+'</td><td class="r tnum">41 / 75</td><td class="r tnum">3</td><td class="r tnum">1</td><td class="r tnum">5</td><td>Closed DAT-2 on <span class="mono">plumbline/2026-11-03-DAT-2</span></td></tr>'+
-    '<tr><td>Harbour Ventures · ventures.harbour.example</td><td><span class="chip ok">do</span></td><td class="r tnum">33 / 75</td><td class="r tnum">6</td><td class="r tnum">0</td><td class="r tnum">1</td><td>Drafted risk appetite (GOV-6)</td></tr>'+
-    '<tr><td>Coral Labs · app.corallabs.example</td><td><span class="chip ok">do</span></td><td class="r tnum">38 / 75</td><td class="r tnum">4</td><td class="r tnum">0</td><td class="r tnum">3</td><td>Added RLS test for partner API</td></tr>'+
+    '<tr><td>Example Advisory · app.advisory.example</td><td>'+stateChip('live').replace('live','do')+'</td><td class="r tnum">41 / 75</td><td class="r tnum">3</td><td class="r tnum">1</td><td class="r tnum">5</td><td>Closed DAT-2 on <span class="mono">plumbline/2026-11-03-DAT-2</span></td></tr>'+
+    '<tr><td>Example Ventures · ventures.advisory.example</td><td><span class="chip ok">do</span></td><td class="r tnum">33 / 75</td><td class="r tnum">6</td><td class="r tnum">0</td><td class="r tnum">1</td><td>Drafted risk appetite (GOV-6)</td></tr>'+
+    '<tr><td>Example Labs · labs.example</td><td><span class="chip ok">do</span></td><td class="r tnum">38 / 75</td><td class="r tnum">4</td><td class="r tnum">0</td><td class="r tnum">3</td><td>Added RLS test for partner API</td></tr>'+
     '<tr><td>Family office · home.example</td><td><span class="chip">report</span></td><td class="r tnum">14 / 75</td><td class="r tnum">17</td><td class="r tnum">2</td><td class="r tnum">0</td><td>Reported only</td></tr></tbody></table></div></div>'+
     '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Waiting for your yes</h2><span class="chip acc">4</span></div><div class="list">'+
     item('acc','1 · Advisory: self-grant trigger on <span class="mono">user_areas</span> (IAM-3)','Migration + 2 tests · 84 lines · undo: drop trigger','<button class="btn primary" data-act="Approved · made tonight">Yes</button><button class="btn" data-act="Declined">No</button>')+
-    item('acc','2 · Ventures: <span class="mono">check:governance</span> in CI (GOV-4)','Workflow step · 12 lines · copied from Coral Labs','<button class="btn primary" data-act="Approved">Yes</button>')+
+    item('acc','2 · Ventures: <span class="mono">check:governance</span> in CI (GOV-4)','Workflow step · 12 lines · copied from Example Labs','<button class="btn primary" data-act="Approved">Yes</button>')+
     item('acc','3 · Push 3 branches and open pull requests','advisory DAT-2, labs RLS test, ventures GOV-6 draft','<button class="btn primary" data-act="Pushed · PRs opened">Yes</button>')+
     item('mat','4 · Plumbline proposal from feedback FB-0142','Make refresh periods a parameter in every app that screens. Minor version.','<button class="btn primary" data-act="Accepted">Accept</button>')+'</div></div>'+
     '<div class="panel"><div class="panel-head"><h2>Feedback, triaged last night</h2><span class="note">9 new · 2 merged</span></div><div class="list">'+
-    item('bad','"I could see another client\'s name in the search suggestions"','Harbour Advisory · Onboarding · risk: possible barrier breach. Routed to the CRCO and you.','<span class="chip bad">Urgent</span>')+
+    item('bad','"I could see another client\'s name in the search suggestions"','Example Advisory · Onboarding · risk: possible barrier breach. Routed to the CRCO and you.','<span class="chip bad">Urgent</span>')+
     item('acc','"Upload button does nothing on my phone"','Ventures · data room · reproduced in staging · fix proposed as an ask.','<span class="chip acc">App fix</span>')+
     item('ok','"Would love the deck version on the invite email"','Ventures · invites · added to the job\'s ideas.','<span class="chip">Idea</span>')+'</div></div></div>'+foot()+'</div>';
 }
@@ -428,7 +428,7 @@ function pOverview(){
   return '<div class="page">'+crumb('gov-overview')+'<div class="ph"><div class="t"><h1>How this app is governed</h1><span class="note">The same structure in every entity\'s app</span></div></div>'+
   '<div class="panel"><div class="panel-head"><h2>The menu follows the business</h2></div><div class="bands">'+
    '<div class="band-card"><span class="label">Governance</span><p class="note">Sets the rules every other part follows.</p><div class="across"><div>Board</div><div>Policies</div><div>Jobs register</div><div>Changes & approvals</div><div>Improvements</div><div>Evidence log</div></div></div>'+
-   '<div class="band-card"><span class="label">The machine</span><p class="note">The phases the business moves a customer through, in order. Every job here names its phase.</p><div class="machine"><div>1 · Lead generation</div><div>2 · Lead activation</div><div>3 · Product delivery</div></div><p class="note">Harbour Advisory: network, events, newsletter → qualify, propose, onboard → engagements, placements, service.</p></div>'+
+   '<div class="band-card"><span class="label">The machine</span><p class="note">The phases the business moves a customer through, in order. Every job here names its phase.</p><div class="machine"><div>1 · Lead generation</div><div>2 · Lead activation</div><div>3 · Product delivery</div></div><p class="note">Example Advisory: network, events, newsletter → qualify, propose, onboard → engagements, placements, service.</p></div>'+
    '<div class="band-card"><span class="label">Across the machine</span><p class="note">Functions that run through every phase.</p><div class="across"><div>Risk</div><div>Compliance</div><div>Finance</div><div>People</div><div>Technology</div></div></div>'+
   '</div></div>'+
   '<div class="panel diagram"><div class="panel-head"><h2>The improvement loop, run every night</h2></div>'+
@@ -482,7 +482,7 @@ function pPlumbline(){return '<div class="page">'+crumb('plumbline')+'<div class
 function regBanner(){return '<div class="gstrip" style="border-color:var(--warn);background:var(--warn-soft);color:var(--warn)"><b>Preview.</b>&nbsp;No regulator has access. This is what a supervisor would see if the view were switched on under a pilot, with written terms approved by the board and counsel.</div>'}
 function regPage(id,title,sub,body){return '<div class="page">'+crumb(id)+'<div class="ph"><div class="t"><h1>'+title+'</h1><span class="note">'+sub+'</span></div><div class="btns"><button class="btn" data-go="reg-requests">Request detail</button></div></div>'+regBanner()+body+regFoot()+'</div>'}
 function regFoot(){return '<div class="vfoot"><span>Supervisory view v0.1 (preview)</span><span>Data as of 21 Oct 2026 22:11</span><span>Evidence checkpoint #412</span><span>Every view is logged and shown to the board and CRCO</span></div>'}
-function pRegHome(){return regPage('reg-home','Harbour Advisory Ltd','Licensed corporate service provider · supervisory view',
+function pRegHome(){return regPage('reg-home','Example Advisory Ltd','Licensed corporate service provider · supervisory view',
   tiles([['Risks within appetite','6 / 8','Outsourcing, data protection above'],['KRI breaches open','2','Both notified within 24 h'],['Controls tested on time','18 / 20','C-09, C-17 due this month'],['Evidence chain','Verified','Checkpoint #412, 21 Oct 22:11']])+
   '<div class="grid g2"><div class="panel"><div class="panel-head"><h2>Since your last visit</h2><span class="note">14 Oct to 21 Oct</span></div><div class="list">'+
   item('acc','Board approved AML policy v2.0','High-risk refresh moves from 12 to 6 months. Two procedures and one control re-signed.','<span class="chip ok">Evidence</span>')+
@@ -567,7 +567,7 @@ function recordDrawer(id,i){
   openDrawer('<div class="dr-h"><div><span class="label">'+c.title+' · record</span><h2 style="margin-top:4px">'+esc(r[0])+'</h2></div><button class="x" data-close aria-label="Close">✕</button></div>'+
    '<div class="dr-b"><dl class="fields">'+c.cols.map(function(h,j){return '<dt>'+h+'</dt><dd>'+stateChip(r[j])+'</dd>'}).join('')+'</dl>'+
    '<div><span class="label">Governance</span><div style="margin-top:6px">'+strip(c)+'</div></div>'+
-   '<div><span class="label">History (evidence log)</span><div class="hist" style="margin-top:8px"><div><span class="when">19 Oct 11:40</span><span>Updated by Analyst under '+c.clauses.split(' · ')[0]+'</span></div><div><span class="when">12 Oct 09:02</span><span>Created by A. Moore</span></div></div></div></div>'+
+   '<div><span class="label">History (evidence log)</span><div class="hist" style="margin-top:8px"><div><span class="when">19 Oct 11:40</span><span>Updated by Analyst under '+c.clauses.split(' · ')[0]+'</span></div><div><span class="when">12 Oct 09:02</span><span>Created by Director A</span></div></div></div></div>'+
    '<div class="dr-f btns">'+(c.readOnly?'<span class="note">Evidence cannot be edited.</span>':'<button class="btn primary" data-edit="'+id+'" data-i="'+i+'">Edit</button><button class="btn" data-close>Close</button>')+'</div>');
 }
 function formDrawer(id,i){
@@ -584,7 +584,7 @@ function feedbackDrawer(){
    '<form class="dr-b form" id="fbForm"><fieldset class="fb-types"><legend class="label" style="margin-bottom:6px">What kind of feedback?</legend>'+
    ['Something broke','Confusing','Missing','Feels risky','Idea'].map(function(t,i){return '<label><input type="radio" name="t" id="t'+i+'" value="'+i+'"'+(i===3?' checked':'')+'> '+t+'</label>'}).join('')+'</fieldset>'+
    '<label for="fbText">What happened?<textarea id="fbText">The refresh date says 12 months, but I thought high-risk clients are every 6 months now.</textarea></label>'+
-   '<dl class="ctx" aria-label="Attached automatically"><dt>Page</dt><dd>/'+S.page+'</dd><dt>Job · level · flag</dt><dd>'+c.job+' · '+c.level+' · '+c.flag+'</dd><dt>Clauses</dt><dd>'+c.clauses+'</dd><dt>Role · entity</dt><dd>'+S.role+' · Harbour Advisory Ltd</dd><dt>Build · Plumbline</dt><dd>4f2a91c · v0.4.0</dd></dl>'+
+   '<dl class="ctx" aria-label="Attached automatically"><dt>Page</dt><dd>/'+S.page+'</dd><dt>Job · level · flag</dt><dd>'+c.job+' · '+c.level+' · '+c.flag+'</dd><dt>Clauses</dt><dd>'+c.clauses+'</dd><dt>Role · entity</dt><dd>'+S.role+' · Example Advisory Ltd</dd><dt>Build · Plumbline</dt><dd>4f2a91c · v0.4.0</dd></dl>'+
    '<p class="note">You get an id now and hear back when it changes something. Tonight\'s run sees this without your name.</p></form>'+
    '<div class="dr-f btns"><button class="btn primary" id="sendFb">Send feedback</button><button class="btn" data-close>Cancel</button></div>');
 }

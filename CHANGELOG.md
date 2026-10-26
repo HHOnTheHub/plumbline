@@ -6,7 +6,7 @@ Newest first. Every version names what changed, the clauses touched, and what ap
 
 - **Renamed from Northstar to Plumbline and published.** Wording only (patch): no clause changed.
 - The standard is now public: organisation-specific material (the apps list, reports, the BMA log, per-app plans and source designs) moved to each operator's private `OPS` folder. [RUN.md](RUN.md) and [AUTONOMY.md](AUTONOMY.md) name the two folders. Approvals are written as "the maintainer" (standard changes) and "the operator" (an organisation's own run); the clause Fix value `Hannes` became `Operator`.
-- Added a fictional worked example, [Harbour Advisory](examples/harbour-advisory/README.md); the prototype uses fictional data.
+- Added a fictional worked example, [Example Advisory](examples/example-advisory/README.md); the prototype uses fictional data.
 - Added [CONTRIBUTING.md](CONTRIBUTING.md), issue templates, [apps.example.yaml](apps.example.yaml) and licences (CC BY 4.0 for documents, Apache-2.0 for code).
 
 ## v0.6.0 · Oct 19, 2026
