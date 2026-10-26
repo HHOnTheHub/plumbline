@@ -11,11 +11,11 @@ review_modes_on: 2026-11-01             # the run asks which apps to move from r
 
 apps:
   - id: advisory
-    name: Harbour Advisory app
-    path: harbour-advisory/app
-    repo: your-org/harbour-advisory-app
+    name: Example Advisory app
+    path: example-advisory/app
+    repo: your-org/example-advisory-app
     default_branch: main
-    entity: Harbour Advisory Ltd
+    entity: Example Advisory Ltd
     regulated: true
     board: [Director A, Director B, Director C]
     crco: CRCO name
@@ -26,6 +26,6 @@ apps:
 
   - id: legacy
     name: Old app being replaced
-    path: harbour-advisory/old-app
-    entity: Harbour Advisory Ltd
+    path: example-advisory/old-app
+    entity: Example Advisory Ltd
     mode: off            # stays untouched until the new app reaches parity

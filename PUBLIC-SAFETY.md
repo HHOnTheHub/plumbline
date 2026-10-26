@@ -15,7 +15,9 @@ This repository is public. Nothing from any organisation's private apps, governa
 | Entity-specific business logic | One firm's screening rules, pricing, models, deal terms |
 | Local paths and machine details | `/Users/<name>/…`, keychain item names |
 
-Examples and fixtures use the fictional firm **Harbour Advisory Ltd** and invented people.
+Examples and fixtures use the fictional firm **Example Advisory Ltd** and invented people.
+
+**Fictional names must be obviously fictional.** Use "Example …", phonetic letters (Alpha Re, Bravo Analytics) or roles (Director A, Contact B), never realistic company names or surnames: a plausible invented name can match a real client or person. Check any new fictional name against the organisation's client list before it is used.
 
 ## Promoting something from a private app
 
@@ -23,7 +25,7 @@ Code, a clause or a lesson from a private app reaches this repository only throu
 
 1. **Needed twice.** A second app needs it, or it is clearly generic.
 2. **Rewritten, not copied.** Generic names, generic tables, no entity-specific rules. Parameters replace hard-coded values.
-3. **Fictional fixtures.** Tests and seeds use Harbour Advisory and invented data only.
+3. **Fictional fixtures.** Tests and seeds use Example Advisory and invented data only.
 4. **No history carried over.** Start a fresh file; never cherry-pick commits from a private repository.
 5. **Scanned.** `scripts/public-safety-check.sh` passes, including the operator's private names list (below).
 6. **Reviewed in a pull request.** `main` is protected; every change arrives by pull request and is read before merge.

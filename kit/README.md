@@ -6,6 +6,6 @@ Shared code that implements Plumbline clauses, so apps install it instead of reb
 
 - **Its own version track.** Kit releases are tagged `kit-vX.Y.Z` with their own [CHANGELOG](CHANGELOG.md). Standard releases stay `vX.Y.Z` (boards adopt those); apps upgrade the kit whenever they like.
 - **Each module names the clauses it meets** (for example "evidence log: DAT-3, SUP-2"), so an app's conformance check can count them.
-- **Generic only.** Nothing specific to one organisation; parameters instead of hard-coded rules; fictional fixtures (Harbour Advisory Ltd).
+- **Generic only.** Nothing specific to one organisation; parameters instead of hard-coded rules; fictional fixtures (Example Advisory Ltd).
 - **No secrets, keys or data.** Those live in each app's environment.
 - **Promoted when a second app needs it**, rewritten, never copied from a private repository.

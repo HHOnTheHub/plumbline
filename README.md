@@ -18,7 +18,7 @@ Each organisation's board and risk owner set the rules. Every app traces what it
 | [standard/clauses.md](standard/clauses.md) | The same standard as 99 checkable clauses with permanent ids, each naming the obligations it answers |
 | [obligations/](obligations/) | Bermuda laws, BMA codes and guidance that bind how systems are built. **All unverified** |
 | [sources/](sources/README.md) | Practice sources (NIST, ISO, OWASP, IIA, COSO, Salim Ismail): advice, not law |
-| [examples/harbour-advisory/](examples/harbour-advisory/README.md) | A fictional firm applying Plumbline: its menu, a conformance excerpt, a procedure |
+| [examples/example-advisory/](examples/example-advisory/README.md) | A fictional firm applying Plumbline: its menu, a conformance excerpt, a procedure |
 | [prototypes/governed-app-experience.html](prototypes/governed-app-experience.html) | A clickable prototype of the standard app shell, with fictional data |
 | [RUN.md](RUN.md) | The nightly run, step by step |
 | [AUTONOMY.md](AUTONOMY.md) | What the run may do alone, what it must ask, and what it never does |
