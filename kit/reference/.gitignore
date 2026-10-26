@@ -1,0 +1,8 @@
+# Copied from the kit by `node ../bin/plumbline-kit.mjs`; the kit is the source.
+supabase/migrations/
+supabase/tests/
+supabase/.temp/
+supabase/.branches/
+node_modules/
+dist/
+.env.local
