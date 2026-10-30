@@ -18,7 +18,7 @@ Each organisation's board and risk owner set the rules. Every app traces what it
 | [standard/clauses.md](standard/clauses.md) | The same standard as 99 checkable clauses with permanent ids, each naming the obligations it answers |
 | [obligations/](obligations/) | Bermuda laws, BMA codes and guidance that bind how systems are built. **All unverified** |
 | [sources/](sources/README.md) | Practice sources (NIST, ISO, OWASP, IIA, COSO, Salim Ismail): advice, not law |
-| [examples/harbour-advisory/](examples/harbour-advisory/README.md) | A fictional firm applying Plumbline: its menu, a conformance excerpt, a procedure |
+| [examples/example-advisory/](examples/example-advisory/README.md) | A fictional firm applying Plumbline: its menu, a conformance excerpt, a procedure |
 | [prototypes/governed-app-experience.html](prototypes/governed-app-experience.html) | A clickable prototype of the standard app shell, with fictional data |
 | [RUN.md](RUN.md) | The nightly run, step by step |
 | [AUTONOMY.md](AUTONOMY.md) | What the run may do alone, what it must ask, and what it never does |
@@ -27,6 +27,8 @@ Each organisation's board and risk owner set the rules. Every app traces what it
 | [plugins/plumbline/](plugins/plumbline/) | A Claude Code plugin with the Plumbline skills |
 | [decisions/](decisions/) | Why the standard is the way it is |
 | [proposals/](proposals/) | Changes considered, accepted or declined |
+| [kit/](kit/README.md) | Shared code that implements the clauses (own version track, `kit-vX.Y.Z`). Empty for now |
+| [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md) | What may never enter this public repository, and the checks that enforce it |
 
 ## Using it
 
@@ -58,7 +60,7 @@ Plumbline follows its own rules: clause ids are permanent and never reused, ever
 
 ## Contributing
 
-Suggestions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Keep anything that identifies your organisation, its people or its systems' weaknesses out of issues and pull requests.
+Suggestions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) and [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md). Keep anything that identifies your organisation, its people or its systems' weaknesses out of issues and pull requests.
 
 ## Licence
 

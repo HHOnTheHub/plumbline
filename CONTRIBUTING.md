@@ -4,6 +4,8 @@ Suggestions are welcome, from a typo to a new clause. Plumbline changes the way 
 
 ## Before you post
 
+Read [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md). Run `scripts/public-safety-check.sh` before opening a pull request; CI runs it too.
+
 **Remove anything that identifies your organisation, its people or its systems' weaknesses.** Issues and pull requests here are public. Describe the problem in general terms ("an app that screens clients had no test that an analyst cannot read another team's records"), never as "our app is missing X".
 
 ## How to suggest a change

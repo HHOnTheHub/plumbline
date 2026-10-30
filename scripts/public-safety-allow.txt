@@ -1,0 +1,3 @@
+# Matches allowed by scripts/public-safety-check.sh: one extended regex per line, tested against "file:line:text".
+noreply@anthropic\.com
+@example\.(com|org|test)

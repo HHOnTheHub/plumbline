@@ -20,7 +20,7 @@ Every app is built as a governed operating system: the owners' decisions sit at 
 
 ## Origins
 
-Plumbline was distilled in 2026 from the architectures of five real apps built in Bermuda: a licensed firm's operating system, a venture studio's investor raise, a platform where several organisations negotiate one text, a founder-learning app, and a family operating system. The licensed firm's design is the base; the others contribute the [patterns](#patterns) an app adds when its jobs need them. Those designs are not published. Worked examples here use a fictional firm, [Harbour Advisory](../examples/harbour-advisory/README.md).
+Plumbline was distilled in 2026 from the architectures of five real apps built in Bermuda: a licensed firm's operating system, a venture studio's investor raise, a platform where several organisations negotiate one text, a founder-learning app, and a family operating system. The licensed firm's design is the base; the others contribute the [patterns](#patterns) an app adds when its jobs need them. Those designs are not published. Worked examples here use a fictional firm, [Example Advisory](../examples/example-advisory/README.md).
 
 ## Design principles
 
@@ -261,7 +261,7 @@ Governance is embedded in the product, not kept beside it. Every app uses the sa
 
 **The shell.** Every app is a CRUD admin app with the main menu on the left, never across the top. Entity and environment sit in the top bar, with one "My actions" inbox per person and a role switcher. The left menu has three bands, in this order:
 
-| Band | Holds | Example: Harbour Advisory (fictional) |
+| Band | Holds | Example: Example Advisory (fictional) |
 | --- | --- | --- |
 | Governance | Overview, board, policies, jobs register, changes and approvals, improvements (feedback), evidence log | The same in every app |
 | The machine | The phases a customer moves through, numbered in order: 1 lead generation, 2 lead activation, 3 product delivery. Each phase holds its jobs' pages | Contacts, events, campaigns · pipeline, proposals, onboarding · engagements, placements, client service |
