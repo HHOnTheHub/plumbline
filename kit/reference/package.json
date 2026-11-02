@@ -1,0 +1,26 @@
+{
+  "name": "plumbline-kit-reference",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Example Advisory Ltd: a small app built on the Plumbline kit, used to prove the kit works.",
+  "type": "module",
+  "scripts": {
+    "sync": "node ../bin/plumbline-kit.mjs migrations supabase && node ../bin/plumbline-kit.mjs tests supabase",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test:db": "supabase test db",
+    "test:smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "typescript": "^5.8.3",
+    "vite": "8.1.5"
+  }
+}

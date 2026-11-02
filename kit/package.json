@@ -1,0 +1,10 @@
+{
+  "name": "@hhonthehub/plumbline-kit",
+  "version": "0.1.0",
+  "description": "Shared Supabase migrations and tests that implement Plumbline clauses: parameters, evidence log, identity and roles, flags, procedures.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": { "plumbline-kit": "bin/plumbline-kit.mjs" },
+  "files": ["bin", "migrations", "tests", "README.md", "CHANGELOG.md"],
+  "repository": { "type": "git", "url": "https://github.com/HHOnTheHub/plumbline.git", "directory": "kit" }
+}

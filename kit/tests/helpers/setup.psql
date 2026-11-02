@@ -1,0 +1,84 @@
+-- Shared test helpers for the Plumbline kit, included by each test file with \ir helpers/setup.psql.
+-- Everything here lives inside the test file's transaction and is rolled back with it.
+create extension if not exists pgtap with schema extensions;
+
+-- Start from no people, so a database with seed data gives the same results as an empty one. The
+-- catalogues (areas, roles, parameters), flags, procedures and the evidence log are left as they are;
+-- tests use their own keys and filter the evidence log by actor or key.
+truncate table public.role_assignments, public.invitations, public.profiles cascade;
+delete from auth.users;
+
+-- Known parameter values for every test, whatever an app or seed set.
+update public.parameters set value = 'true' where key = 'identity.require_mfa';
+update public.parameters set value = 'null' where key = 'identity.workspace_domain';
+update public.parameters set value = 'false' where key = 'retention.enforced';
+
+create schema tests;
+grant usage on schema tests to anon, authenticated, service_role;
+
+-- Test roles, alongside the kit's System administrator:
+--   test_officer  board-appointed control function: general, risk_compliance
+--   test_lead     operational, may assign operational roles: general, admin_settings
+--   test_member   operational: general
+--   test_runner   operational: general (incompatible with test_officer)
+insert into public.roles (key, label, rank, board_appointed, assigns_operational) values
+  ('test_officer', 'Test officer', 2, true, false),
+  ('test_lead', 'Test lead', 3, false, true),
+  ('test_member', 'Test member', 2, false, false),
+  ('test_runner', 'Test runner', 2, false, false);
+insert into public.role_areas (role_key, area_key) values
+  ('test_officer', 'general'), ('test_officer', 'risk_compliance'),
+  ('test_lead', 'general'), ('test_lead', 'admin_settings'),
+  ('test_member', 'general'), ('test_runner', 'general');
+insert into public.role_incompatibilities (role_a, role_b, reason)
+values ('test_officer', 'test_runner', 'The person who runs it is not the person who checks it');
+
+-- A signed-up person holding the given role, created the real way: a pending invitation, then an
+-- auth.users row, so handle_new_user creates the profile and the role assignment.
+create function tests.make_user(_email text, _role text)
+returns uuid language plpgsql as $$
+declare v_id uuid := gen_random_uuid();
+begin
+  insert into public.invitations (email, role_key) values (lower(_email), _role);
+  insert into auth.users (id, email, raw_user_meta_data, aud, role)
+  values (v_id, lower(_email), jsonb_build_object('full_name', split_part(_email, '@', 1)), 'authenticated', 'authenticated');
+  return v_id;
+end $$;
+
+-- Act as a signed-in person with a second factor (aal2).
+create function tests.act_as(_id uuid)
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', _id, 'role', 'authenticated', 'aal', 'aal2')::text, true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  set local role authenticated;
+end $$;
+
+-- The same person signed in without a second factor (aal1).
+create function tests.act_as_aal1(_id uuid)
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', _id, 'role', 'authenticated', 'aal', 'aal1')::text, true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  set local role authenticated;
+end $$;
+
+-- A visitor who is not signed in.
+create function tests.act_as_anon()
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', json_build_object('role', 'anon')::text, true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  set local role anon;
+end $$;
+
+-- Back to the test runner (postgres, no auth.uid()), which also stands in for the service role.
+create function tests.act_as_postgres()
+returns void language plpgsql as $$
+begin
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  reset role;
+end $$;
+
+grant execute on all functions in schema tests to anon, authenticated, service_role;

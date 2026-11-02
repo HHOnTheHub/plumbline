@@ -1,0 +1,37 @@
+name: Kit
+on:
+  pull_request:
+    paths: ['kit/**', '.github/workflows/kit.yml']
+  push:
+    branches: [main]
+    paths: ['kit/**', '.github/workflows/kit.yml']
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kit/reference
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.121.0
+      - name: Install the reference app
+        run: npm ci
+      - name: Copy the kit into the reference app
+        run: npm run sync
+      - name: Start Supabase (kit migrations, then the Example Advisory seed)
+        run: supabase start
+      - name: Database tests (pgTAP)
+        run: supabase test db
+      - name: End-to-end smoke test through the API
+        run: |
+          export SUPABASE_KEY="$(supabase status -o env | grep -E '^(PUBLISHABLE_KEY|ANON_KEY)=' | head -1 | cut -d= -f2- | tr -d '"')"
+          npm run test:smoke
+      - name: Type check and build
+        run: npm run build

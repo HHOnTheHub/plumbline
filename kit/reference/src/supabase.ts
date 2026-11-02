@@ -1,0 +1,7 @@
+import { createClient } from '@supabase/supabase-js';
+
+const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const key = import.meta.env.VITE_SUPABASE_KEY as string | undefined;
+
+export const configured = Boolean(url && key);
+export const supabase = createClient(url ?? 'http://127.0.0.1:55321', key ?? 'missing');

@@ -1,3 +1,5 @@
 # Matches allowed by scripts/public-safety-check.sh: one extended regex per line, tested against "file:line:text".
+# example.com, example.org and the .test TLD are reserved for documentation and testing (RFC 2606).
 noreply@anthropic\.com
 @example\.(com|org|test)
+@[A-Za-z0-9.-]+\.test\b
