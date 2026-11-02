@@ -3,6 +3,8 @@
 #
 # mode: off (never touched) | report (read and report only) | do (Do changes on branches, Ask for the rest; see AUTONOMY.md)
 # push: ask (every push needs a yes) | allowed (the run may push its branches and open pull requests; still never merges)
+# lead: true marks the one app where shared practice is built first; Plumbline's baseline is promoted up from it (DEC-006).
+# promoted_through: the lead app commit the baseline was last promoted from; the run looks for improvements after it.
 # feedback_export / feedback_key: the app's de-identified feedback endpoint (FBK-6) and the keychain item holding its read-only key.
 
 plumbline_version: 0.6.0
@@ -23,6 +25,8 @@ apps:
     checks: npm run check
     mode: report
     push: ask
+    lead: true
+    promoted_through: 0000000          # commit sha in this app
 
   - id: legacy
     name: Old app being replaced

@@ -18,6 +18,7 @@ The run may make these changes without asking, **on a new local branch in a sepa
 - Lint and type fixes needed for a check to pass, when they do not change behaviour
 - Comments or metadata declaring the job, step and clause ids code implements
 - Draft procedure versions (never accepted ones), and new rows in `OPS/bma-log.md`
+- Promotion candidates in `OPS/promotions/`, from the lead app (RUN.md step 2.8)
 
 Limits per run: at most **one Do change per app**, each under **300 changed lines and 15 files**. Anything larger becomes Ask.
 
@@ -42,6 +43,7 @@ The run writes a short proposal in the report (what, why, which clause, files to
 - Approve anything: governance documents, exceptions, gates, pull requests, procedure versions
 - Move a feature flag, or add or remove a practice source
 - Change Plumbline's standard, clauses, obligations, AUTONOMY.md or RUN.md (propose instead), or mark any obligation verified
+- Write anything into Plumbline, kit included. A promotion the operator approves is made in a separate session, by the promotion checklist
 - Change its own tests, thresholds or the checks it is measured by, in Plumbline or in an app, to make a result pass
 - Disable hooks, skip checks or use `--no-verify`, `--force` or history rewrites
 - Touch an app whose `mode` in `OPS/apps.yaml` is `off`, or change anything in an app whose mode is `report`

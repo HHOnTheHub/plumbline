@@ -2,7 +2,7 @@
 
 A governance-first engineering standard for building business apps to the grade a licensed firm needs, whether or not yours is licensed. Every app is measured against it the way a builder checks a wall against a plumb line: one fixed reference, checked often.
 
-**Current version: v0.6.1** (see [CHANGELOG.md](CHANGELOG.md)). Written for small organisations building with Claude Code, Supabase and TanStack Start, with a Bermuda obligations library. Maintained by Hannes Heyns ([@HHOnTheHub](https://github.com/HHOnTheHub)).
+**Current version: v0.7.0** (see [CHANGELOG.md](CHANGELOG.md)). Written for small organisations building with Claude Code, Supabase and TanStack Start, with a Bermuda obligations library. Maintained by Hannes Heyns ([@HHOnTheHub](https://github.com/HHOnTheHub)).
 
 > **Not legal advice.** The [obligations library](obligations/) is an unverified research map of Bermuda laws, BMA codes and guidance. Every entry is marked `unverified` until your own counsel confirms it against the consolidated text. Do not rely on it as if counsel had checked it.
 
@@ -27,7 +27,7 @@ Each organisation's board and risk owner set the rules. Every app traces what it
 | [plugins/plumbline/](plugins/plumbline/) | A Claude Code plugin with the Plumbline skills |
 | [decisions/](decisions/) | Why the standard is the way it is |
 | [proposals/](proposals/) | Changes considered, accepted or declined |
-| [kit/](kit/README.md) | Shared code that implements the clauses (own version track, `kit-vX.Y.Z`). Empty for now |
+| [kit/](kit/README.md) | Shared code that implements the clauses (own version track, `kit-vX.Y.Z`). v0.1: parameters, evidence log, identity and roles, flags, procedures |
 | [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md) | What may never enter this public repository, and the checks that enforce it |
 
 ## Using it
@@ -40,7 +40,7 @@ Each app carries three things:
 2. A technology policy in the app's governance, from [templates/technology-policy.md](templates/technology-policy.md): how the organisation's board adopts a Plumbline version and approves exceptions.
 3. A line in its `CLAUDE.md`: *This app follows Plumbline (https://github.com/HHOnTheHub/plumbline), version in `governance/conformance.md`. Read `standard/clauses.md` before changing governance, access, data or delivery.*
 
-Pin a tag (for example `v0.6.1`), not `main`.
+Pin a tag (for example `v0.7.0`), not `main`.
 
 ## How Plumbline changes
 

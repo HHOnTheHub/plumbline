@@ -2,6 +2,13 @@
 
 Newest first. Every version names what changed, the clauses touched, and what apps must do.
 
+## v0.7.0 · Nov 2, 2026
+
+- **The lead app builds the baseline.** Each operator names one lead app (`lead: true`, `promoted_through` in `OPS/apps.yaml`). Shared practice is built and proven there first, and Plumbline's kit and standard are promoted up from it. See [DEC-006](decisions/DEC-006-lead-app-builds-the-baseline.md).
+- RUN.md: step 2.8, promotion candidates, written to `OPS/promotions/` and raised as asks; report section "Promotion candidates". AUTONOMY.md: the run may write candidates; it never writes into Plumbline, kit included.
+- PUBLIC-SAFETY.md and the kit: "proven in the lead app" is a reason to promote, alongside "needed twice".
+- No clause changed. **Apps must:** nothing. **Operators:** mark a lead app and set `promoted_through`.
+
 ## v0.6.2 · Oct 25, 2026
 
 - Repository only; no clause changed. Added [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md) (what may never enter this public repository, and how something from a private app is promoted), a repo [CLAUDE.md](CLAUDE.md), `scripts/public-safety-check.sh` with local hooks and a CI workflow (generic patterns plus Gitleaks; operators add a private names list locally), and an empty [kit/](kit/README.md) for shared code on its own `kit-vX.Y.Z` version track.
