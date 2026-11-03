@@ -3,7 +3,7 @@
 The operator's scheduled task runs this every night (for example at 22:00). Its prompt names two folders and says *follow `RUN.md`*:
 
 - **`PLUMBLINE`**: a checkout of this repository at the version the operator pins. The run reads it and never changes it.
-- **`OPS`**: the operator's private folder, never published. It holds `apps.yaml` (copied from [apps.example.yaml](apps.example.yaml)), `reports/`, `bma-log.md`, `proposals/` and any private decisions.
+- **`OPS`**: the operator's private folder, never published. It holds `apps.yaml` (copied from [apps.example.yaml](apps.example.yaml)), `reports/`, `bma-log.md`, `proposals/`, `promotions/` and any private decisions.
 
 Below, `OPS/…` means a file in the private folder; every other path is in this repository. Improving the run means improving this file, by proposal.
 
@@ -31,6 +31,7 @@ Work through the apps in the order listed. For each:
 5. **Look the other way too.** If the app does something better than the standard says, or the standard does not fit it, draft a proposal (step 5).
 6. **Triage feedback.** If the app has a `feedback_export` in `OPS/apps.yaml`, fetch it with the key from the macOS keychain item named in `feedback_key` (`security find-generic-password -s <name> -w`; never print or store the key). Read only items newer than the last report. For each: merge duplicates, classify it as app fix, procedure, policy or risk, or idea, link it to the job, clause and risk it concerns, and route it by the chain (FBK-3). An app fix may become today's Do change or an ask. Anything suggesting a breach goes under Urgent. If the export contains a name, email address or record identifier, stop reading it, report the redaction failure as urgent, and do not copy the text into the report.
 7. **Draft procedure changes.** Look at the code merged to the default branch since the last report. For every change that touches a declared step id (PRC-2), draft the new procedure version in plain words, with a before and after per step and a link to the change (PRC-3). Check it against the clauses its steps cite (PRC-6): if it fits, it goes to the job owner (and the CRCO for a regulated job); if it needs a new rule, write a policy proposal instead; if it breaks a policy, put it under Urgent. Write drafts into the app's procedures table only through the app's own draft function on a worktree branch, or, until that exists, into the report. Never accept a version or move a flag.
+8. **Promotion candidates.** Unless the app has `contributes: false`, look at what merged to its default branch since its `promoted_through` commit in `OPS/apps.yaml`, and at candidate files already in `OPS/promotions/`, so nothing is raised twice. For each change that makes the baseline better (a fix, a tighter rule or a new test in something a kit module covers; a pattern any regulated app would need; a practice no clause asks for yet, or a clause the app had to work around), write `OPS/promotions/<date>-<app-id>-<short-name>.md`: the app and commit, what changed, why it is better, generic or specific to the organisation, what the generic version would look like, and what must be rewritten or left out for a public repository. If another app solved the same problem differently, say which is better and why, in the candidate only. Each new candidate becomes an ask (it counts towards the two per app). Never write to Plumbline, and never carry a candidate into another app: on the operator's yes, the promotion is made in a separate session by the promotion checklist in [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md), other apps get it from Plumbline, and the operator moves `promoted_through` forward. See [DEC-006](decisions/DEC-006-apps-build-the-baseline.md).
 
 ## 3. Making a Do change
 
@@ -66,6 +67,7 @@ Plumbline v<version> · apps checked: <n> · changes made: <n> · asks: <n>
 ## Procedure changes (per app: drafts waiting, policy-fit result, who must accept)
 ## BMA               (new items that passed the filter, with the obligation each may touch)
 ## Feedback          (per app: id, type, one-line gist, route, proposed action)
+## Promotion candidates (per app: new files in OPS/promotions/, generic or specific, kit or standard)
 ## Needs the operator      (clauses only the operator can close)
 ## Proposals         (new files in OPS/proposals/)
 ## Details           (one section per app: what was assessed, what was found)

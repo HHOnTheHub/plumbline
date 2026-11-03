@@ -53,4 +53,4 @@ Sign in with `operator@example.com`, `director.a@example.com`, `crco@example.com
 - **Each module names the clauses it meets**, so an app's conformance check can count them.
 - **Generic only.** Nothing specific to one organisation; parameters instead of hard-coded rules; fictional fixtures (Example Advisory Ltd).
 - **No secrets, keys or data.** Those live in each app's environment.
-- **Promoted when a second app needs it**, rewritten, never copied from a private repository (see [PUBLIC-SAFETY.md](../PUBLIC-SAFETY.md)).
+- **Promoted up from the apps** once proven in one, or when a second app needs it; rewritten, never copied from a private repository (see [PUBLIC-SAFETY.md](../PUBLIC-SAFETY.md) and [DEC-006](../decisions/DEC-006-apps-build-the-baseline.md)).

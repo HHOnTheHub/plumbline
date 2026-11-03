@@ -23,7 +23,7 @@ Examples and fixtures use the fictional firm **Example Advisory Ltd** and invent
 
 Code, a clause or a lesson from a private app reaches this repository only through **promotion**, never by copying:
 
-1. **Needed twice.** A second app needs it, or it is clearly generic.
+1. **Needed twice, or proven in an app.** A second app needs it, it is clearly generic, or it is in use in one of the operator's apps with its tests passing ([DEC-006](decisions/DEC-006-apps-build-the-baseline.md)). The nightly run only proposes candidates, in the operator's private folder. Plumbline is the only channel between apps: nothing passes from one private app to another except through a promotion here.
 2. **Rewritten, not copied.** Generic names, generic tables, no entity-specific rules. Parameters replace hard-coded values.
 3. **Fictional fixtures.** Tests and seeds use Example Advisory and invented data only.
 4. **No history carried over.** Start a fresh file; never cherry-pick commits from a private repository.

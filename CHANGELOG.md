@@ -2,6 +2,13 @@
 
 Newest first. Every version names what changed, the clauses touched, and what apps must do.
 
+## v0.7.0 · Nov 2, 2026
+
+- **The apps build the baseline.** Plumbline's kit and standard are promoted up from what the operator's apps prove, not pushed down into them. Each app has a `promoted_through` commit in `OPS/apps.yaml` (and `contributes: false` to opt out). **Plumbline is the only channel between apps:** one app learns from another only through a rewritten promotion. See [DEC-006](decisions/DEC-006-apps-build-the-baseline.md).
+- RUN.md: step 2.8, promotion candidates, written to `OPS/promotions/` and raised as asks; report section "Promotion candidates". AUTONOMY.md: the run may write candidates; it never writes into Plumbline, kit included, and never carries anything from one app into another.
+- PUBLIC-SAFETY.md and the kit: "proven in one of the operator's apps" is a reason to promote, alongside "needed twice".
+- No clause changed. **Apps must:** nothing. **Operators:** set `promoted_through` for each app.
+
 ## v0.6.2 · Oct 25, 2026
 
 - Repository only; no clause changed. Added [PUBLIC-SAFETY.md](PUBLIC-SAFETY.md) (what may never enter this public repository, and how something from a private app is promoted), a repo [CLAUDE.md](CLAUDE.md), `scripts/public-safety-check.sh` with local hooks and a CI workflow (generic patterns plus Gitleaks; operators add a private names list locally), and an empty [kit/](kit/README.md) for shared code on its own `kit-vX.Y.Z` version track.
