@@ -1,6 +1,6 @@
 # Plumbline kit
 
-Shared code that implements Plumbline clauses, so apps install it instead of rebuilding it. **v0.1.0** has five database modules as Supabase migrations, with tests, and a reference app that proves they work together.
+Shared code that implements Plumbline clauses, so apps install it instead of rebuilding it. **v0.1.1** has five database modules as Supabase migrations, with tests, and a reference app that proves they work together.
 
 ## Modules
 
@@ -10,7 +10,7 @@ Shared code that implements Plumbline clauses, so apps install it instead of reb
 | 02 Evidence log | `…_02_evidence_log.sql` | DAT-3, DAT-4, DAT-10 | Append-only `evidence_log` (no update, delete or truncate for any role); `log_evidence(...)`; actor stamped by the database |
 | 03 Identity, roles and areas | `…_03_identity_and_roles.sql` | IAM-1, IAM-3, IAM-4, IAM-5, IAM-7, IAM-8 | Invitation-only sign-up; `access_areas`, `roles`, `role_areas`, `role_incompatibilities`, `role_assignments`; `has_area`, `has_role`, `my_areas`; assign, revoke and re-confirm with review dates; no self-assignment; Workspace-domain and MFA rules as parameters; `apply_retention()` |
 | 04 Flags | `…_04_flags.sql` | LIF-1 to LIF-4, AGT-4 | `feature_flags` (off, shadow, live, audience); gate records; `switch_on`, `set_flag_state`, `flag_allows`, `my_flags`; licensed work stays off until the licence parameter is true |
-| 05 Procedures | `…_05_procedures.sql` | PRC-1, PRC-4, PRC-5 | Versioned `procedures`, `procedure_versions`, `procedure_steps`; draft, accept (owner, not the drafter), co-sign (risk owner, for regulated), reject with a reason; a flag goes up only when an accepted procedure names it |
+| 05 Procedures | `…_05_procedures.sql` | PRC-1, PRC-4, PRC-5 | Versioned `procedures`, `procedure_versions`, `procedure_steps`; draft, accept (owner, not the drafter), co-sign (someone who holds the risk area, for regulated; `holds_area`), reject with a reason; a flag goes up only when an accepted procedure names it |
 
 Every table has row-level security on; people write only through security-definer functions; every action is evidenced with the clauses it carries out.
 
@@ -32,7 +32,7 @@ Until the package is published to npm, run the same command from a checkout: `no
 
 ## The reference app
 
-[reference/](reference/) is **Example Advisory Ltd**, a fictional firm: a small left-menu app (Governance, The machine, Across the machine) on the kit, with four local accounts in different roles. CI starts it from scratch on every pull request, runs the 106 database tests and an end-to-end smoke test through the API, and builds the app.
+[reference/](reference/) is **Example Advisory Ltd**, a fictional firm: a small left-menu app (Governance, The machine, Across the machine) on the kit, with four local accounts in different roles. CI starts it from scratch on every pull request, runs the 109 database tests and an end-to-end smoke test through the API, and builds the app.
 
 To run it locally (needs Docker and the Supabase CLI):
 

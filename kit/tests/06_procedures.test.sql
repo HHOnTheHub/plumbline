@@ -8,7 +8,8 @@ create temp table u as select
   tests.make_user('lead@example.com', 'test_lead') as lead,
   tests.make_user('lead2@example.com', 'test_lead') as lead2,
   tests.make_user('officer@example.com', 'test_officer') as officer,
-  tests.make_user('member@example.com', 'test_member') as member;
+  tests.make_user('member@example.com', 'test_member') as member,
+  tests.make_user('admin@example.com', 'system_administrator') as admin;
 grant select on u to authenticated;
 
 insert into public.feature_flags (key, job_id, level, description) values ('t05.record', 'T05', 'record', 'Test');
@@ -39,7 +40,15 @@ select tests.act_as((select lead2 from u));
 select is(public.accept_procedure_version('T05-P1', 1), 'awaiting co-sign', 'the owner accepts; a regulated one waits for a co-sign');
 select throws_ok($$select public.cosign_procedure_version('T05-P1', 1)$$, 'P0001',
   'Only the risk owner co-signs a regulated procedure (Plumbline PRC-4).', 'only the risk area co-signs');
+-- A control function is held, not reached: all_areas gives the System administrator every area to read
+-- and work in, but not the co-sign (v0.1.1).
+select tests.act_as((select admin from u));
+select ok(public.has_area('risk_compliance') and not public.holds_area('risk_compliance'),
+  'the System administrator reaches the risk area but does not hold it');
+select throws_ok($$select public.cosign_procedure_version('T05-P1', 1)$$, 'P0001',
+  'Only the risk owner co-signs a regulated procedure (Plumbline PRC-4).', 'the System administrator cannot co-sign');
 select tests.act_as((select officer from u));
+select ok(public.holds_area('risk_compliance'), 'the risk owner holds the risk area');
 select is(public.cosign_procedure_version('T05-P1', 1), 'accepted', 'the risk owner co-signs and it takes effect');
 
 -- Accepted versions never change.
