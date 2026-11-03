@@ -4,10 +4,10 @@ Newest first. Every version names what changed, the clauses touched, and what ap
 
 ## v0.7.0 · Nov 2, 2026
 
-- **The lead app builds the baseline.** Each operator names one lead app (`lead: true`, `promoted_through` in `OPS/apps.yaml`). Shared practice is built and proven there first, and Plumbline's kit and standard are promoted up from it. See [DEC-006](decisions/DEC-006-lead-app-builds-the-baseline.md).
-- RUN.md: step 2.8, promotion candidates, written to `OPS/promotions/` and raised as asks; report section "Promotion candidates". AUTONOMY.md: the run may write candidates; it never writes into Plumbline, kit included.
-- PUBLIC-SAFETY.md and the kit: "proven in the lead app" is a reason to promote, alongside "needed twice".
-- No clause changed. **Apps must:** nothing. **Operators:** mark a lead app and set `promoted_through`.
+- **The apps build the baseline.** Plumbline's kit and standard are promoted up from what the operator's apps prove, not pushed down into them. Each app has a `promoted_through` commit in `OPS/apps.yaml` (and `contributes: false` to opt out). **Plumbline is the only channel between apps:** one app learns from another only through a rewritten promotion. See [DEC-006](decisions/DEC-006-apps-build-the-baseline.md).
+- RUN.md: step 2.8, promotion candidates, written to `OPS/promotions/` and raised as asks; report section "Promotion candidates". AUTONOMY.md: the run may write candidates; it never writes into Plumbline, kit included, and never carries anything from one app into another.
+- PUBLIC-SAFETY.md and the kit: "proven in one of the operator's apps" is a reason to promote, alongside "needed twice".
+- No clause changed. **Apps must:** nothing. **Operators:** set `promoted_through` for each app.
 
 ## v0.6.2 · Oct 25, 2026
 
